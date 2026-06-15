@@ -101,6 +101,7 @@ docs/模块验收清单.md       # 每个模块的验收标准，作为「完成
 ```text
 .agents/skills/mysql-readonly-probe-via-java/SKILL.md    # MySQL 只读探测（无客户端 / Java JDBC）
 .agents/skills/git-commit-guard/SKILL.md                 # 提交前检查关卡，全绿才 commit，push 需确认
+.agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory
 ```
 
 规划中（尚未实现，使用本 Skill 时若引用请标注「规划中」，不要假定已存在）：
@@ -110,7 +111,6 @@ business-closed-loop-review     # 业务闭环走查
 java-springboot-review          # SpringBoot 代码走查
 vue-admin-review                # Vue Admin 前端走查
 sql-migration-safety            # SQL 变更安全检查
-ai-handoff-doc-update           # AI 交接文档更新
 ```
 
 ## 本 Skill 不做什么
