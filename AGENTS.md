@@ -32,7 +32,8 @@ docs       →  业务事实与验收依据
 ## 文档约定
 
 - 新增 / 改动 Skill 后，同步更新 `README.md` 的「包含的 Skills」表格。
-- 规划中的 Skill 清单以 `team-ai-workspace-bootstrap` 的「配套 Skills」一节为唯一来源，README 引用它，不重复维护。
+- 规划中的 Skill 清单以根目录 `ROADMAP.md` 为**唯一来源**，README、各 Skill 正文一律指向它，不重复维护。
+- 贡献流程与 Skill 编写规范见 `CONTRIBUTING.md`。
 - 提交遵循 `git-commit-guard` 的思路：先自检 diff（含未跟踪文件），再 commit，push 前确认。
 
 ## 写 / 改 Skill 的原则

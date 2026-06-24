@@ -117,14 +117,7 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 .agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory
 ```
 
-规划中（尚未实现，使用本 Skill 时若引用请标注「规划中」，不要假定已存在）：
-
-```text
-business-closed-loop-review     # 业务闭环走查
-java-springboot-review          # SpringBoot 代码走查
-vue-admin-review                # Vue Admin 前端走查
-sql-migration-safety            # SQL 变更安全检查
-```
+规划中（尚未实现）：清单与目标以仓库根的 **`ROADMAP.md`** 为唯一来源。使用本 Skill 时若引用任何规划中 Skill，必须标注「规划中」，不要假定已存在。
 
 ## 本 Skill 不做什么
 
