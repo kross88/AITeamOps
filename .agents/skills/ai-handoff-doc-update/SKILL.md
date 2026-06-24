@@ -60,7 +60,8 @@ description: 任务完成后沉淀项目记忆。当完成一项涉及代码/SQL
 | 通用风险点、易踩的坑 | `docs/ai-memory/risk-points.md` | 仅新增重大风险时在索引加一行 |
 | 新模块 / 新关键表 / 新 Skill / 目录结构变动 | 对应明细文件 | **是**（只更新索引那一行） |
 
-> 如果项目用的是 `team-ai-workspace-bootstrap` 建的 `docs/AI开发交接记录.md`、`docs/模块验收清单.md`，把「任务记录」写进 `AI开发交接记录.md`，作用等同 `task-log.md`。以项目已有结构为准，不要两套并存。
+> 上表的 `docs/ai-memory/` 结构与 `team-ai-workspace-bootstrap` 初始化出的骨架一致，直接对应即可。
+> **向后兼容**：早期 bootstrap 版本曾建过单文件 `docs/AI开发交接记录.md`，若项目里已有它，就继续把「任务记录」写进去，作用等同 `task-log.md`，不要再另起 `task-log.md`。一切**以项目已有结构为准，不要两套并存**。
 
 ---
 

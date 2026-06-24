@@ -38,9 +38,17 @@ git diff --stat
 
 ### 第 2 步：审查本次 diff（提交前自检）
 
+> ⚠️ **关键：先暂存再扫描。** 必须先 `git add -A` 把**所有改动（含新建的未跟踪文件）**纳入暂存，再用 `git diff --staged` 审查。否则新建文件（`.env`、`credentials.json`、`id_rsa`、`application-prod.yml` 等最易夹带密钥的文件）既不在 `git diff` 里，也不在尚未暂存的 `git diff --staged` 里，会**完全绕过本次扫描**却被第 6 步的 `git add -A` 提交进去。暂存是可逆的，扫描出问题随时能 `git reset`。
+
 ```bash
-git diff            # 已跟踪文件的改动
-git diff --staged   # 已暂存的改动
+git add -A          # 先全量暂存：新建/修改/删除都纳入，扫描才不漏未跟踪文件
+git diff --staged   # 审查全部待提交改动（已含新建文件内容）
+```
+
+```powershell
+# Windows PowerShell
+git add -A
+git diff --staged
 ```
 
 逐项检查，发现以下任一情况 **中止并报告用户**：
@@ -53,11 +61,18 @@ git diff --staged   # 已暂存的改动
 - 与本次功能无关的大范围改动
 ```
 
-敏感信息扫描参考命令：
+敏感信息扫描参考命令（在 `git add -A` 之后执行，确保覆盖新建文件）：
 
 ```bash
 git diff --staged | grep -nEi '(password|secret|api[_-]?key|token|AKIA|BEGIN .*PRIVATE KEY)' || echo "未发现明显敏感串"
 ```
+
+```powershell
+# Windows PowerShell（无 grep 时用 Select-String）
+git diff --staged | Select-String -Pattern 'password|secret|api[_-]?key|token|AKIA|BEGIN .*PRIVATE KEY'
+```
+
+> 若扫描命中，先 `git reset` 撤销暂存，处理掉敏感内容（删除文件 / 移入 `.gitignore` / 改用环境变量）后再重来，**不要带着可疑内容继续**。
 
 ### 第 3 步：探测项目结构
 
@@ -69,6 +84,15 @@ find . -maxdepth 3 -name "pom.xml" -not -path "*/target/*"
 find . -maxdepth 3 -name "build.gradle*" -not -path "*/build/*"
 # 前端
 find . -maxdepth 3 -name "package.json" -not -path "*/node_modules/*"
+```
+
+```powershell
+# Windows PowerShell（无 find 时用 Get-ChildItem）
+# 后端
+Get-ChildItem -Recurse -Depth 3 -Filter pom.xml          | Where-Object FullName -notmatch '\\target\\'
+Get-ChildItem -Recurse -Depth 3 -Filter build.gradle*    | Where-Object FullName -notmatch '\\build\\'
+# 前端
+Get-ChildItem -Recurse -Depth 3 -Filter package.json     | Where-Object FullName -notmatch '\\node_modules\\'
 ```
 
 按找到的入口决定下一步跑哪些构建命令。
@@ -120,10 +144,10 @@ npm test --if-present -- --watchAll=false   # CI 模式，跑完即退
 
 ### 第 6 步：生成并执行 commit
 
-检查全绿后，生成符合规范的提交信息再执行：
+检查全绿后，生成符合规范的提交信息再执行。第 2 步已 `git add -A` 暂存过，这里再 `git add -A` 一次，是为了把第 5 步自动修复期间产生的改动一并纳入：
 
 ```bash
-git add -A
+git add -A          # 补入第 5 步自动修复的改动（第 2 步已扫描过的内容不会引入新风险）
 git commit -m "<type>: <本次功能简述>"
 ```
 
@@ -214,3 +238,6 @@ push 前再确认一次当前分支对不对，避免推错分支。
 
 ### 坑 6：误提交敏感信息
 一旦 push 到公网，密钥即使删除也已泄露（要走轮换流程）。所以第 2 步的扫描在 commit 前做，push 又加一道人工确认。
+
+### 坑 7：扫描漏掉新建的未跟踪文件
+最隐蔽的一种。`git diff` 只看已跟踪文件，新建的 `.env`/密钥文件不在其中；若扫描在 `git add` 之前做，等于没扫到它们，却会被第 6 步 `git add -A` 提交。所以第 2 步必须**先 `git add -A` 再扫 `git diff --staged`**，让新建文件进入扫描范围。

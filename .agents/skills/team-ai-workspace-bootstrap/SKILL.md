@@ -29,10 +29,17 @@ project-root/
 ├── .agents/
 │   └── skills/                # 项目共享 Skills
 └── docs/
-    ├── 系统业务流程.html
-    ├── AI开发交接记录.md
-    └── 模块验收清单.md
+    ├── 系统业务流程.html       # 业务全景
+    ├── 模块验收清单.md         # 验收依据
+    └── ai-memory/             # 项目记忆（由 ai-handoff-doc-update 维护）
+        ├── task-log.md        # 任务流水（谁改了什么、为什么）
+        ├── interface-map.md   # 接口入口与字段映射
+        ├── database-map.md    # 表结构与关系
+        ├── risk-points.md     # 风险点与坑
+        └── modules/           # 各模块业务理解，一模块一文件
 ```
+
+> docs 结构与 `ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 完全对齐，三处保持同一套，避免「两套并存」。
 
 ## 执行步骤
 
@@ -70,7 +77,7 @@ project-root/
 - 涉及数据库只读排查，使用 `mysql-readonly-probe-via-java` Skill
 
 ## 文档约定
-- 业务变更同步更新 `docs/AI开发交接记录.md`
+- 业务变更与任务记录沉淀到 `docs/ai-memory/`（由 `ai-handoff-doc-update` 路由归位）
 - 新模块完成后更新 `docs/模块验收清单.md`
 ```
 
@@ -81,10 +88,16 @@ project-root/
 ### 第 4 步：创建 docs 模板
 
 ```text
-docs/系统业务流程.html     # 业务全景，给 AI 和新人快速建立上下文
-docs/AI开发交接记录.md     # 每次重要变更追加一条，谁改了什么、为什么
-docs/模块验收清单.md       # 每个模块的验收标准，作为「完成」的客观依据
+docs/系统业务流程.html            # 业务全景，给 AI 和新人快速建立上下文
+docs/模块验收清单.md              # 每个模块的验收标准，作为「完成」的客观依据
+docs/ai-memory/task-log.md       # 任务流水，每次重要变更追加一条
+docs/ai-memory/interface-map.md  # 接口入口、请求/返回字段映射
+docs/ai-memory/database-map.md   # 表结构、表关系、关键字段含义
+docs/ai-memory/risk-points.md    # 通用风险点、易踩的坑
+docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文件
 ```
+
+> `docs/ai-memory/` 下的文件由 `ai-handoff-doc-update` 在任务收尾时增量写入，这里只建空骨架。
 
 ### 第 5 步：建立 .agents/skills 目录并接入 Skill
 

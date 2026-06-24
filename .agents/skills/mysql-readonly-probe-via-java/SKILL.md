@@ -1,6 +1,6 @@
 ---
 name: mysql-readonly-probe-via-java
-description: 在没有 mysql 客户端、Python 也无 MySQL 驱动的机器上，用 JDK + 项目里现成的 mysql-connector-java jar 连接 MySQL 做只读探测。仅允许查询，绝不写库。
+description: 在没有 mysql 客户端、Python 也无 MySQL 驱动的机器上，用 JDK + 项目里现成的 mysql-connector-java jar 连接 MySQL 做只读探测。当用户说「这台机器没装 mysql，帮我看下这张表结构」「确认下数据库连的是哪个库」「查一下这张表有没有数据 / 字段是什么」「线上库结构帮我探一下」，或需要在无 mysql/mysqlsh 客户端、不能装依赖的环境里确认连通性、版本、当前库、表结构、字段、少量样例数据时使用。仅允许 SELECT/SHOW/DESCRIBE/EXPLAIN 等只读查询，绝不写库、改表、删数据。
 ---
 
 # MySQL 只读探测（无客户端 / Java JDBC 方案）
@@ -43,6 +43,16 @@ LOCK ...
 UNLOCK ...
 SET GLOBAL ...
 SET PERSIST ...
+```
+
+即便以 `SELECT` 开头，下列「读语句但有副作用」同样禁止：
+
+```sql
+SELECT ... INTO OUTFILE ...      -- 写文件到服务器磁盘
+SELECT ... INTO DUMPFILE ...     -- 写文件到服务器磁盘
+SELECT ... FOR UPDATE            -- 加行锁
+SELECT ... LOCK IN SHARE MODE    -- 加共享锁
+select 1; drop table t;          -- 分号堆叠的多语句一律禁止
 ```
 
 任何可能修改数据、结构、权限、会话外状态或产生副作用的 SQL 都禁止执行。
@@ -370,19 +380,31 @@ public class DbCheck {
 
   private static void assertReadOnly(String sql) {
     String x = sql.trim().toLowerCase(Locale.ROOT);
-    if (!(x.startsWith("select") || x.startsWith("show") || x.startsWith("describe") || x.startsWith("desc") || x.startsWith("explain"))) {
+
+    // 1) 只允许这些只读语句开头。insert/update/delete/drop... 等写操作
+    //    只能出现在语句开头，这里直接挡住，无需再对全文做子串匹配
+    //    （旧版用 contains("update ") 之类会误伤字符串字面量，如 WHERE note='please update '）。
+    boolean okHead = x.startsWith("select") || x.startsWith("show")
+        || x.startsWith("describe") || x.startsWith("desc") || x.startsWith("explain");
+    if (!okHead) {
       throw new IllegalArgumentException("禁止执行非只读 SQL：" + sql);
     }
 
-    String[] banned = {
-        "insert ", "update ", "delete ", "create ", "alter ", "drop ", "truncate ",
-        "grant ", "revoke ", "replace ", "merge ", "call ", "lock ", "unlock ",
-        "set global", "set persist"
-    };
+    // 2) 禁止堆叠多条语句（如 "select 1; drop table t"）。
+    //    去掉末尾可有的一个分号后，正文里不应再出现分号。
+    String body = x.endsWith(";") ? x.substring(0, x.length() - 1) : x;
+    if (body.contains(";")) {
+      throw new IllegalArgumentException("禁止一次执行多条 SQL：" + sql);
+    }
 
-    for (String b : banned) {
+    // 3) 即便以 select 开头，也禁止带副作用的子句：写磁盘、加锁。
+    String[] bannedFragments = {
+        "into outfile", "into dumpfile",   // 写文件到服务器磁盘
+        " for update", "lock in share"     // 行锁
+    };
+    for (String b : bannedFragments) {
       if (x.contains(b)) {
-        throw new IllegalArgumentException("禁止执行疑似写操作 SQL：" + sql);
+        throw new IllegalArgumentException("禁止执行带副作用的 SQL：" + sql);
       }
     }
   }
