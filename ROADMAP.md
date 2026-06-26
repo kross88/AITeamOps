@@ -9,6 +9,7 @@
 聚焦两个核心问题：① 一个人用多个模型写同一项目；② 一个团队多人、各自 AI 对项目理解不一。并引入「三层记忆 + 跨项目经验累积」。
 - `project-context-sync` —— 开工/首次浏览代码前**先同步远程（git pull）+ 加载 `docs/ai-memory`**，把理解对齐到团队基线（`ai-handoff-doc-update` 的读侧对偶）
 - `cross-project-experience` —— 把**对任何项目都适用**的经验沉淀进全局指令文件（CLAUDE.md/AGENTS.md），一个微型的永久经验累积过程（第 ② 层记忆）
+- `onboard-aiteamops` + `ONBOARDING.md` —— 自举层：让一个陌生工具/模型「读懂框架→写进自己的永久记忆文件→自检」，把「让你的 AI 学习并永久记住本框架」变成自助、可验证、跨工具的流程
 - `multi-tool-entrypoint-sync` + `scripts/sync-tool-entrypoints.ps1` —— 以 `AGENTS.md` 为唯一真源，为 Codex/Claude/Cursor/Copilot/Gemini 等生成「指回真源」的入口文件
 - `docs/ai-memory/overview.md` —— 项目心智模型快照，团队共享理解的单一入口
 - `ai-handoff-doc-update` 增补「团队并发与合并约定」（顶部追加 / 原子条目 / 冲突两留）
