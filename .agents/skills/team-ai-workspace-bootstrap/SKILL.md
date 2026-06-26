@@ -21,7 +21,8 @@ docs       管「业务事实」和「验收依据」——业务流程、交接
 
 ```text
 project-root/
-├── AGENTS.md                  # 项目级总规则 + 目录路由
+├── AGENTS.md                  # 项目级总规则 + 目录路由（唯一真源）
+├── CLAUDE.md / GEMINI.md …    # 各工具入口（指针，由 multi-tool-entrypoint-sync 生成，按需）
 ├── service/                   # 后端（示例命名，按实际调整）
 │   └── AGENTS.md              # 后端目录级规则
 ├── backweb/                   # 前端（示例命名，按实际调整）
@@ -31,7 +32,8 @@ project-root/
 └── docs/
     ├── 系统业务流程.html       # 业务全景
     ├── 模块验收清单.md         # 验收依据
-    └── ai-memory/             # 项目记忆（由 ai-handoff-doc-update 维护）
+    └── ai-memory/             # 项目记忆（开工 project-context-sync 读，收尾 ai-handoff-doc-update 写）
+        ├── overview.md        # 项目心智模型快照（团队共享理解的单一入口，开工先读）
         ├── task-log.md        # 任务流水（谁改了什么、为什么）
         ├── interface-map.md   # 接口入口与字段映射
         ├── database-map.md    # 表结构与关系
@@ -40,6 +42,7 @@ project-root/
 ```
 
 > docs 结构与 `ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 完全对齐，三处保持同一套，避免「两套并存」。
+> 多工具入口（`CLAUDE.md`/`.cursor/rules/…`/`GEMINI.md` 等）以 `AGENTS.md` 为唯一真源，由 `multi-tool-entrypoint-sync` 生成，团队用几个工具就生成几个。
 
 ## 执行步骤
 
@@ -72,13 +75,15 @@ project-root/
 - `docs/`：业务事实与验收依据，改业务逻辑前先读
 
 ## 全局红线
+- **首次浏览/探索代码前，必须先用 `project-context-sync` 同步远程并加载 `docs/ai-memory`**（无 git 仓库则跳过同步）
 - 不读 `docs/` 不动业务逻辑
 - 改库 / 改表结构必须先出 SQL 给人审，不自动执行
 - 涉及数据库只读排查，使用 `mysql-readonly-probe-via-java` Skill
 
 ## 文档约定
-- 业务变更与任务记录沉淀到 `docs/ai-memory/`（由 `ai-handoff-doc-update` 路由归位）
+- 开工先读 `docs/ai-memory/overview.md`（项目心智模型）；业务变更与任务记录由 `ai-handoff-doc-update` 沉淀回 `docs/ai-memory/`
 - 新模块完成后更新 `docs/模块验收清单.md`
+- 多工具入口以本 `AGENTS.md` 为唯一真源，由 `multi-tool-entrypoint-sync` 生成，不在入口文件里复制规则正文
 ```
 
 ### 第 3 步：生成目录级 AGENTS.md
@@ -90,6 +95,7 @@ project-root/
 ```text
 docs/系统业务流程.html            # 业务全景，给 AI 和新人快速建立上下文
 docs/模块验收清单.md              # 每个模块的验收标准，作为「完成」的客观依据
+docs/ai-memory/overview.md       # 项目心智模型快照，团队共享理解的单一入口，开工先读
 docs/ai-memory/task-log.md       # 任务流水，每次重要变更追加一条
 docs/ai-memory/interface-map.md  # 接口入口、请求/返回字段映射
 docs/ai-memory/database-map.md   # 表结构、表关系、关键字段含义
@@ -112,9 +118,11 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 已实现，可直接引用：
 
 ```text
-.agents/skills/mysql-readonly-probe-via-java/SKILL.md    # MySQL 只读探测（无客户端 / Java JDBC）
+.agents/skills/project-context-sync/SKILL.md             # 开工先同步远程+加载记忆，对齐团队理解（读侧）
+.agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory（写侧）
+.agents/skills/multi-tool-entrypoint-sync/SKILL.md       # 以 AGENTS.md 为真源，生成各 AI 工具入口文件
 .agents/skills/git-commit-guard/SKILL.md                 # 提交前检查关卡，全绿才 commit，push 需确认
-.agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory
+.agents/skills/mysql-readonly-probe-via-java/SKILL.md    # MySQL 只读探测（无客户端 / Java JDBC）
 ```
 
 规划中（尚未实现）：清单与目标以仓库根的 **`ROADMAP.md`** 为唯一来源。使用本 Skill 时若引用任何规划中 Skill，必须标注「规划中」，不要假定已存在。

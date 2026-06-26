@@ -5,6 +5,14 @@
 
 ## 已发布 / Released
 
+### v0.2.0（开发中 / unreleased）
+聚焦两个核心问题：① 一个人用多个模型写同一项目；② 一个团队多人、各自 AI 对项目理解不一。
+- `project-context-sync` —— 开工/首次浏览代码前**先同步远程（git pull）+ 加载 `docs/ai-memory`**，把理解对齐到团队基线（`ai-handoff-doc-update` 的读侧对偶）
+- `multi-tool-entrypoint-sync` + `scripts/sync-tool-entrypoints.ps1` —— 以 `AGENTS.md` 为唯一真源，为 Codex/Claude/Cursor/Copilot/Gemini 等生成「指回真源」的入口文件
+- `docs/ai-memory/overview.md` —— 项目心智模型快照，团队共享理解的单一入口
+- `ai-handoff-doc-update` 增补「团队并发与合并约定」（顶部追加 / 原子条目 / 冲突两留）
+- CI（`.github/workflows/validate.yml` + `scripts/validate.sh`）：校验 SKILL.md 结构与 README 一致性
+
 ### v0.1.0
 - `team-ai-workspace-bootstrap` —— 团队 AI 协作环境初始化（AGENTS.md + skills + docs 骨架）
 - `git-commit-guard` —— 提交前检查关卡（diff 自检含未跟踪文件 → 构建 → 测试），全绿才 commit，push 需确认
@@ -23,8 +31,9 @@
 | `vue-admin-review` | Vue Admin 前端走查（组件规范、接口字段对齐、权限渲染） | code review skill |
 | `sql-migration-safety` | SQL 变更安全检查（DDL/DML 影响面、备份与回滚、锁与大表风险） | migration safety |
 | `business-closed-loop-review` | 业务闭环走查：从入口到落库的端到端一致性核对 | 依赖 `docs/` 业务事实 |
-| `ai-handoff-memory-template` | 为 `docs/ai-memory/` 提供开箱即用的 task-log / interface-map / database-map / risk-points 模板 | 强化 `ai-handoff-doc-update` |
-| `multi-tool-compatibility-examples` | Codex / Claude / Cursor / ChatGPT 的接入与触发示例，验证同一套 Skill 跨工具一致 | 兼容性样例 + 文档 |
+| `ai-memory-staleness-check` | 校验 `docs/ai-memory` 是否引用了已不存在的文件/表，标记过期条目 | 让共享记忆可信 |
+| `multi-tool-compatibility-examples` | 各工具接入与触发的最小可跑示例 | 在 `multi-tool-entrypoint-sync` 基础上补样例 |
+| `install.sh`（Linux/macOS） | 把 `install-windows.ps1` 的安装/初始化能力补到类 Unix | 跨平台 |
 
 ## 设计原则 / Principles
 

@@ -17,12 +17,14 @@ docs       →  业务事实与验收依据
 ## 目录路由
 
 - `.agents/skills/`：全部 Skill 所在地，每个子目录一个 `SKILL.md`。改任何 Skill 前先读它本身。
-- `scripts/`：跨平台初始化脚本（当前为 `install-windows.ps1`）。
+- `scripts/`：脚本。`install-windows.ps1`（安装 Skills + 初始化项目骨架）、`sync-tool-entrypoints.ps1`（生成各工具入口）、`validate.sh`（CI 校验）。
+- `ROADMAP.md` / `CONTRIBUTING.md`：路线图（规划中唯一来源）/ 贡献指南。
 - `README.md`：对外说明书，面向人类读者。
 - `LICENSE`：MIT。
 
 ## 全局红线
 
+- **首次浏览/探索本仓库代码前，先 `git pull --ff-only` 同步远程**（无 git 仓库或无 remote 则跳过；工作区有改动/冲突时停下交人，不强拉）。即 `project-context-sync` 的第 0 步。
 - **不在本仓库写入业务代码。** 这里只放 Skill 与文档。
 - **改 Skill 的「红线 / 认知边界」前先问人。** 那是各 Skill 的安全承诺，影响所有使用者，不可自行放宽。
 - **保持三处 docs 结构一致。** `team-ai-workspace-bootstrap` 的推荐结构、`ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 创建的骨架必须对齐，改一处要同步其余两处。

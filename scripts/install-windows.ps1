@@ -76,6 +76,7 @@ if (-not $ProjectRoot) {
     New-DirIfMissing "$ProjectRoot\docs\ai-memory\modules"
     New-FileIfMissing "$ProjectRoot\docs\系统业务流程.html"
     New-FileIfMissing "$ProjectRoot\docs\模块验收清单.md"
+    New-FileIfMissing "$ProjectRoot\docs\ai-memory\overview.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\task-log.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\interface-map.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\database-map.md"

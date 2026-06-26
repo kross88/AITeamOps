@@ -1,0 +1,9 @@
+# Shell 脚本必须 LF —— CI 在 Linux 上跑，CRLF 会导致 bash 报 $'\r' 错误
+*.sh text eol=lf
+
+# Windows PowerShell 脚本用 CRLF（文件带 UTF-8 BOM，PS 5.1 友好）
+*.ps1 text eol=crlf
+
+# 文本类按文本处理，二进制保持原样
+*.md   text
+*.yml  text eol=lf

@@ -1,0 +1,16 @@
+name: validate
+
+# 校验 Skills 结构与文档一致性。纯文档仓库，只跑轻量校验，不构建。
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run validation
+        run: bash scripts/validate.sh
