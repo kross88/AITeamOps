@@ -120,6 +120,7 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 ```text
 .agents/skills/project-context-sync/SKILL.md             # 开工先同步远程+加载记忆，对齐团队理解（读侧）
 .agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory（写侧）
+.agents/skills/cross-project-experience/SKILL.md         # 跨项目通用经验沉淀到全局指令文件（全局累积）
 .agents/skills/multi-tool-entrypoint-sync/SKILL.md       # 以 AGENTS.md 为真源，生成各 AI 工具入口文件
 .agents/skills/git-commit-guard/SKILL.md                 # 提交前检查关卡，全绿才 commit，push 需确认
 .agents/skills/mysql-readonly-probe-via-java/SKILL.md    # MySQL 只读探测（无客户端 / Java JDBC）

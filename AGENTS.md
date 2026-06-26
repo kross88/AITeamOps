@@ -14,6 +14,14 @@ Skills     →  执行流程：可复用操作步骤固化成可触发流程
 docs       →  业务事实与验收依据
 ```
 
+三层记忆（经验往哪沉淀）：
+
+```text
+① 项目专属事实   → docs/ai-memory/（ai-handoff-doc-update，随项目共享）
+② 跨项目通用经验 → 全局指令文件 CLAUDE.md/AGENTS.md（cross-project-experience，改前确认）
+③ 一次性失误     → 不记
+```
+
 ## 目录路由
 
 - `.agents/skills/`：全部 Skill 所在地，每个子目录一个 `SKILL.md`。改任何 Skill 前先读它本身。
