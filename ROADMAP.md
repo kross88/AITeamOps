@@ -37,6 +37,14 @@
 | `multi-tool-compatibility-examples` | 各工具接入与触发的最小可跑示例 | 在 `multi-tool-entrypoint-sync` 基础上补样例 |
 | `install.sh`（Linux/macOS） | 把 `install-windows.ps1` 的安装/初始化能力补到类 Unix | 跨平台 |
 
+## 记忆的成长路径 / Memory scaling path
+
+AITeamOps 的记忆是**零运行时的 markdown**（`docs/ai-memory/*.md`、`MEMORY.md`），人读、git 共享、人工维护——适合几十到几百条规模。当一个团队的记忆涨到上千条、人工翻不动时，不必推倒重来：
+
+- 这些 markdown 文件**本身就是规范真源**；可以在其上**挂一个向量记忆插件**（如 OpenClaw 的 `memory-lancedb-pro`，它的规范文本恰好也存在 `MEMORY.md` / `memory/**/*.md`）来做语义检索、自动召回。
+- **分工**：AITeamOps 做「轻量、可读、可审计的真源 + 团队约定」；向量插件做「大规模语义检索」。互补，不竞争。
+- 本框架的记忆纪律（L0/L1/L2 分层、case/pattern 双层、值得记/绝不记、去重 7 决策）正是借鉴这类成熟插件、又落进纯 markdown 的产物——所以两者天然兼容。
+
 ## 设计原则 / Principles
 
 新增任何 Skill 都遵循同一套原则（详见 [CONTRIBUTING.md](CONTRIBUTING.md)）：
