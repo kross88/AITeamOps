@@ -34,6 +34,7 @@
 | `sql-migration-safety` | SQL 变更安全检查（DDL/DML 影响面、备份与回滚、锁与大表风险） | migration safety |
 | `business-closed-loop-review` | 业务闭环走查：从入口到落库的端到端一致性核对 | 依赖 `docs/` 业务事实 |
 | `ai-memory-staleness-check` | 校验 `docs/ai-memory` 是否引用了已不存在的文件/表，标记过期条目 | 让共享记忆可信 |
+| `memory-consolidation` | 周期性/文件过大时整理 `docs/ai-memory`：合并重复、SUPERSEDE 过期事实、归档旧 task-log、把高频事实上提到 overview | 借鉴向量插件的 "dreaming" 离线整理，让记忆只增不腐 |
 | `multi-tool-compatibility-examples` | 各工具接入与触发的最小可跑示例 | 在 `multi-tool-entrypoint-sync` 基础上补样例 |
 | `install.sh`（Linux/macOS） | 把 `install-windows.ps1` 的安装/初始化能力补到类 Unix | 跨平台 |
 
