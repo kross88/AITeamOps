@@ -66,10 +66,26 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
 - 提交用 git-commit-guard：先 git add -A 再扫敏感信息（含未跟踪文件）→ 构建/测试 →
   全绿才 commit；push 需显式确认；默认提交当前分支。
 
+### 固定动作（可见产物，缺了 = 没跑流程）
+- 开工声明：任务第一条回复含 2-3 行——远程同步结果（pull 了/为何跳过）、加载了哪些项目记忆。
+- 收尾沉淀：任务总结必含「沉淀」段——项目层/全局层/用户层各扫一遍的结论，「本次无需沉淀」也要写。
+- 冲突外显：两条规则打架不许沉默选边——按更安全一侧执行并声明「冲突点+选择+理由」，拿不准就问。
+- 验证等级：交付代码改动时声明 L0 静态阅读 / L1 编译 / L2 测试 / L3 联调，及未达等级的风险；
+  被禁止构建时主动申请最小验证（仅 compile）。静态核对方法签名 ≠ 编译验证。
+
+### 数据库
+- 默认只读（mysql-readonly-probe-via-java）。写 SQL 前先探测真实表结构与库版本方言；
+  写/改涉及库字段的接口后，能连库就 SELECT 采样核验字段类型与存储格式（逗号分隔 vs JSON、
+  字典值域、ID 类型、日期格式），别靠猜。
+- 写库仅限用户本次会话明确授权，用 mysql-guarded-write：只碰需求相关表（白名单先过目）、
+  逐条预检+报告影响行数、先备份可回滚；DROP DATABASE / TRUNCATE / 无 WHERE 更新等绝对禁止。
+
 ### 可用 Skill（命中即用，全文见仓库）
 project-context-sync 开工同步｜ai-handoff-doc-update 任务后沉淀项目记忆｜
-cross-project-experience 跨项目经验沉淀到本文件｜multi-tool-entrypoint-sync 多工具入口统一｜
-git-commit-guard 安全提交｜mysql-readonly-probe-via-java 只读探测｜team-ai-workspace-bootstrap 新项目骨架
+ai-deliverable-review 复核 AI/他人交付的模块（验收级）｜cross-project-experience 跨项目经验沉淀到本文件｜
+multi-tool-entrypoint-sync 多工具入口统一｜git-commit-guard 安全提交｜
+mysql-readonly-probe-via-java 只读探测｜mysql-guarded-write 授权写库（受控）｜
+team-ai-workspace-bootstrap 新项目骨架
 
 ### 跨项目经验（自动累积，由 cross-project-experience 维护；改前确认）
 - （示例）合并若没先 pull、或对冲突没看就合，必须三方核对（合并结果 vs 本地父 vs 远程父），

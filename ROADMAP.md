@@ -13,6 +13,10 @@
 - `multi-tool-entrypoint-sync` + `scripts/sync-tool-entrypoints.ps1` —— 以 `AGENTS.md` 为唯一真源，为 Codex/Claude/Cursor/Copilot/Gemini 等生成「指回真源」的入口文件
 - `docs/ai-memory/overview.md` —— 项目心智模型快照，团队共享理解的单一入口
 - `ai-handoff-doc-update` 增补「团队并发与合并约定」（顶部追加 / 原子条目 / 冲突两留）
+- `ai-deliverable-review` —— 验收级复核另一个 AI/同事交付的模块：不信总结只信代码、四类越权逐条查、验证等级 L0-L3 必须声明（源自真实场景：Codex 开发 + Claude 复核暴露的 3 个编译错误）
+- `mysql-guarded-write` —— 用户明确授权下的受控写库：表白名单过目、逐条预检+报告影响行数、先备份可回滚、DROP/TRUNCATE/无 WHERE 更新绝对禁止（`mysql-readonly-probe` 的写侧姊妹，其只读红线不变）
+- **固定动作**（把义务性规则绑定到可见产物，治「巧合合规」与沉默偏离）：开工声明、收尾沉淀结论、冲突外显、验证等级声明——禁止性规则容易守、义务性规则容易漏，可见产物让漏跑一眼可查
+- **数据库核验习惯**：写 SQL 前先探真实表结构与方言；写/改接口后 SELECT 采样核验字段类型与存储格式（逗号分隔 vs JSON 等），别靠猜
 - CI（`.github/workflows/validate.yml` + `scripts/validate.sh`）：校验 SKILL.md 结构与 README 一致性
 
 ### v0.1.0

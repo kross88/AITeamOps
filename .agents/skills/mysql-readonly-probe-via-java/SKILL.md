@@ -1,6 +1,6 @@
 ---
 name: mysql-readonly-probe-via-java
-description: 在没有 mysql 客户端、Python 也无 MySQL 驱动的机器上，用 JDK + 项目里现成的 mysql-connector-java jar 连接 MySQL 做只读探测。当用户说「这台机器没装 mysql，帮我看下这张表结构」「确认下数据库连的是哪个库」「查一下这张表有没有数据 / 字段是什么」「线上库结构帮我探一下」，或需要在无 mysql/mysqlsh 客户端、不能装依赖的环境里确认连通性、版本、当前库、表结构、字段、少量样例数据时使用。仅允许 SELECT/SHOW/DESCRIBE/EXPLAIN 等只读查询，绝不写库、改表、删数据。
+description: 在没有 mysql 客户端、Python 也无 MySQL 驱动的机器上，用 JDK + 项目里现成的 mysql-connector-java jar 连接 MySQL 做只读探测。当用户说「这台机器没装 mysql，帮我看下这张表结构」「确认下数据库连的是哪个库」「查一下这张表有没有数据 / 字段是什么」「线上库结构帮我探一下」，或需要在无 mysql/mysqlsh 客户端、不能装依赖的环境里确认连通性、版本、当前库、表结构、字段、少量样例数据时使用。此外：写完/改完涉及数据库字段的接口后、或写 SQL 前，只要能连库，就应主动用本 Skill SELECT 采样核验字段真实类型与数据存储格式（逗号分隔 vs JSON、字典值域、日期格式），别靠猜。仅允许 SELECT/SHOW/DESCRIBE/EXPLAIN 等只读查询，绝不写库、改表、删数据；用户明确授权写库时切换到 mysql-guarded-write。
 ---
 
 # MySQL 只读探测（无客户端 / Java JDBC 方案）
@@ -59,10 +59,9 @@ select 1; drop table t;          -- 分号堆叠的多语句一律禁止
 
 如果用户需要写库：
 
-1. 不要执行。
-2. 把 SQL 写给用户。
-3. 明确说明风险、备份建议、影响范围和回滚建议。
-4. 由用户亲自执行。
+1. 不要在本 Skill 内执行——本 Skill 的「绝不写库」没有例外。
+2. 默认路径：把 SQL 写给用户，说明风险、备份建议、影响范围和回滚建议，由用户亲自执行。
+3. 用户**明确授权代为执行**时：切换到 `mysql-guarded-write`，按它的红线走（表白名单、逐条预检报告、备份可回滚、禁项不碰）。切换是显式的，不是在探测里顺手写一条。
 
 ---
 
@@ -77,6 +76,19 @@ select 1; drop table t;          -- 分号堆叠的多语句一律禁止
 - 机器上有 JDK。
 - Java 项目或 Maven 仓库里已有 `mysql-connector-java` jar。
 - 只需要确认数据库连通性、版本、当前库、表结构、字段、少量样例数据。
+
+**应当主动使用的场景（不等用户开口）**——只要环境能连库：
+
+- **写 SQL 前**：先探测真实表结构、数据库版本方言（如 MySQL 5.7 的语法限制）、菜单/字典等系统表的实际字段，不凭空假设。
+- **写完/改完涉及数据库字段的接口后**：SELECT 采样核验代码假设与真实数据一致——
+  ```text
+  字段真实类型      DO 里的 String/Long 与列类型是否匹配（如用户 ID 是 varchar 还是 bigint）
+  数据存储格式      逗号分隔 vs JSON 数组 vs 单值（决定 LIKE 还是 FIND_IN_SET 还是 JSON_CONTAINS）
+  字典/枚举值域     代码里的枚举值与库里实际出现的值是否一致
+  日期格式          datetime vs date vs varchar 存日期
+  空值与默认值      NULL 分布是否会击穿代码里的假设
+  ```
+  接口"看起来对"但字段格式假设错了，是最常见的隐性 bug 来源。
 
 不要用于：
 

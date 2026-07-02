@@ -121,10 +121,12 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 .agents/skills/onboard-aiteamops/SKILL.md                # 自举：教新工具/模型学会并永久记住本框架
 .agents/skills/project-context-sync/SKILL.md             # 开工先同步远程+加载记忆，对齐团队理解（读侧）
 .agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory（写侧）
+.agents/skills/ai-deliverable-review/SKILL.md            # 复核 AI/他人交付的模块（验收级，不信总结只信代码）
 .agents/skills/cross-project-experience/SKILL.md         # 跨项目通用经验沉淀到全局指令文件（全局累积）
 .agents/skills/multi-tool-entrypoint-sync/SKILL.md       # 以 AGENTS.md 为真源，生成各 AI 工具入口文件
 .agents/skills/git-commit-guard/SKILL.md                 # 提交前检查关卡，全绿才 commit，push 需确认
 .agents/skills/mysql-readonly-probe-via-java/SKILL.md    # MySQL 只读探测（无客户端 / Java JDBC）
+.agents/skills/mysql-guarded-write/SKILL.md              # 用户明确授权下的受控写库（白名单/预检/可回滚）
 ```
 
 规划中（尚未实现）：清单与目标以仓库根的 **`ROADMAP.md`** 为唯一来源。使用本 Skill 时若引用任何规划中 Skill，必须标注「规划中」，不要假定已存在。
