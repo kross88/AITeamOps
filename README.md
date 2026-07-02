@@ -94,10 +94,12 @@ cp -r AITeamOps/.agents/skills/* ~/.agents/skills/
 ```
 
 ```powershell
-# Windows PowerShell
+# Windows PowerShell（或直接跑 .\scripts\install-windows.ps1，还会顺带初始化项目骨架）
 git clone https://github.com/kross88/AITeamOps.git
 Copy-Item AITeamOps\.agents\skills\* "$env:USERPROFILE\.agents\skills\" -Recurse
 ```
+
+> 更省事的方式：把 [ONBOARDING.md](ONBOARDING.md) 指给你的 AI，让它按 `onboard-aiteamops` 自助完成「安装 + 写入永久记忆 + 自检」。
 
 **项目级（只对当前项目生效，推荐团队共享时用）**
 
@@ -114,6 +116,8 @@ Skill 不需要手动调用 —— AI 工具会读取每个 `SKILL.md` 头部的
 - 「帮我把这次改动提交了」 → 命中 `git-commit-guard`，先跑检查关卡再 commit
 - 「这个新项目接入一下 AI 开发规范」 → 命中 `team-ai-workspace-bootstrap`
 - 「线上这台机器没装 mysql，帮我看下这张表结构」 → 命中 `mysql-readonly-probe-via-java`
+- 「复核下 Codex 做的这个模块，别只看它的总结」 → 命中 `ai-deliverable-review`，验收级逐层核对
+- 「这个增量 SQL 你直接执行吧」 → 命中 `mysql-guarded-write`，白名单过目后受控执行
 
 所以 `description` 写得越准，触发越精确。
 

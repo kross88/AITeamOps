@@ -19,11 +19,12 @@
    正文：认知边界 / 红线 / 分步流程 / 反馈格式 / 常见坑
    ```
    - **`name`**：与文件夹同名，kebab-case，唯一。
-   - **`description`**：决定「何时触发」，是 AI 选用 Skill 的**唯一依据**。要写清适用与不适用场景，并带上用户的口语化触发句。
+   - **`description`**：决定「何时触发」，是 AI 选用 Skill 的**唯一依据**。要写清适用与不适用场景，并带上用户的口语化触发句。**控制在 1024 字符内**（每次会话都会被加载，过长会被部分工具截断，CI 会拦）。
    - **正文**：决定「触发后怎么做」。建议含：认知边界、红线、分步流程、反馈格式、常见坑。
-3. **登记**：在 [README.md](README.md) 的「包含的 Skills」表格里加一行。
-4. **跨平台命令**：如果正文给了 shell 命令，Windows 与 Linux/macOS 尽量都给（本仓库主力在 Windows，注意 PowerShell 5.1 的中文需 UTF-8 BOM）。
-5. **提交**：按 `git-commit-guard` 的思路——先自检 diff（含未跟踪文件）、再 commit、**push 前确认**。
+3. **登记（三处，CI 会校验）**：[README.md](README.md)「包含的 Skills」表格、`team-ai-workspace-bootstrap` 的「配套 Skills」清单、`onboard-aiteamops` 的治理块 Skill 列表，各加一行。
+4. **跨平台命令**：如果正文给了 shell 命令，Windows 与 Linux/macOS 尽量都给（本仓库主力在 Windows，注意 PowerShell 5.1 的中文需 UTF-8 BOM，`.sh` 必须 LF——CI 会查）。
+5. **自检**：提交前跑 `bash scripts/validate.sh`，全绿再提。
+6. **提交**：按 `git-commit-guard` 的思路——先自检 diff（含未跟踪文件）、再 commit、**push 前确认**。
 
 ## 三层分工（别越界）
 
