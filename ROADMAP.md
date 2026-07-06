@@ -43,6 +43,8 @@
 | `memory-consolidation` | 周期性/文件过大时整理 `docs/ai-memory`：合并重复、SUPERSEDE 过期事实、归档旧 task-log、把高频事实上提到 overview | 借鉴向量插件的 "dreaming" 离线整理，让记忆只增不腐 |
 | `multi-tool-compatibility-examples` | 各工具接入与触发的最小可跑示例 | 在 `multi-tool-entrypoint-sync` 基础上补样例 |
 | `install.sh`（Linux/macOS） | 把 `install-windows.ps1` 的安装/初始化能力补到类 Unix | 跨平台 |
+| 并行开发约定 | 多名成员同时让各自 AI 开发同一项目时的协作协议：模块认领、分支口径、共享文件（字典/错误码/路由表）改动的碰撞预防 | 可先作为 bootstrap 生成的 AGENTS.md 一节，够复杂再独立成 Skill |
+| `retrospective-review` | 定期（如月度）让 AI 复盘 task-log/risk-points：重复出现的坑 → 提议升级为规则或 Skill | cross-project-experience 的批处理版，让框架自我进化有节奏 |
 
 ## 记忆的成长路径 / Memory scaling path
 
