@@ -74,6 +74,7 @@ if (-not $ProjectRoot) {
 
     # docs：业务事实 + 项目记忆（与 ai-handoff-doc-update 的路由表保持一致）
     New-DirIfMissing "$ProjectRoot\docs\ai-memory\modules"
+    New-DirIfMissing "$ProjectRoot\docs\requirements"
     New-FileIfMissing "$ProjectRoot\docs\系统业务流程.html"
     New-FileIfMissing "$ProjectRoot\docs\模块验收清单.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\overview.md"

@@ -1,11 +1,13 @@
 ---
 name: team-ai-workspace-bootstrap
-description: 初始化和统一团队 AI 协作开发环境。当用户提到「初始化 AI 协作环境」「统一团队 AGENTS.md」「配置 Codex/Claude/Cursor/ChatGPT 规则」「搭建 skills 目录」「建 docs 协作文档」「新项目接入 AI 开发规范」，或在一个新仓库/新模块里想让团队的 AI 工具行为一致时，都应使用本 Skill。本 Skill 负责生成目录骨架、AGENTS.md、docs 模板，不用于编写业务代码。
+description: 初始化项目的 AI 协作环境——先认真分析项目再生成有真实内容的规则与记忆，不是只建空目录。当用户说「初始化下项目」「初始化一下这个项目」「初始化 AI 协作环境」「统一团队 AGENTS.md」「新项目接入 AI 开发规范」「搭建 skills/docs 骨架」时使用。做法：自动探测项目结构/技术栈/模块划分/数据库（只读），探测结论给用户确认后，生成含真实内容的 AGENTS.md（含 AI 行动边界）并预填 docs/ai-memory/overview.md 项目心智模型初稿，让读写闭环从第一天就有内容可读。不编写业务代码。
 ---
 
 # Team AI Workspace Bootstrap
 
 本 Skill 用于帮团队统一 AI 编程协作环境：让 Codex、Claude、Cursor、ChatGPT 等工具在同一个项目里遵循一致的规则、复用同一套 Skills、读同一份业务事实。
+
+**初始化 = 分析 + 预填，不是 mkdir。** 用户说「初始化下项目」时，要做的是一次「项目入学考试」：自己把项目读懂（目录、技术栈、模块、数据库），把结论写成**有真实内容**的 AGENTS.md 和 `overview.md` 初稿——而不是问用户一堆 AI 自己能查清的问题，然后建一堆空文件。空的 `overview.md` 意味着下一次 `project-context-sync` 开工加载进来的是空气。
 
 ## 核心原则
 
@@ -32,6 +34,7 @@ project-root/
 └── docs/
     ├── 系统业务流程.html       # 业务全景
     ├── 模块验收清单.md         # 验收依据
+    ├── requirements/          # 需求说明归档（按 templates/需求说明模板.md 写，随代码进 git）
     └── ai-memory/             # 项目记忆（开工 project-context-sync 读，收尾 ai-handoff-doc-update 写）
         ├── overview.md        # 项目心智模型快照（团队共享理解的单一入口，开工先读）
         ├── task-log.md        # 任务流水（谁改了什么、为什么）
@@ -44,35 +47,63 @@ project-root/
 > docs 结构与 `ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 完全对齐，三处保持同一套，避免「两套并存」。
 > 多工具入口（`CLAUDE.md`/`.cursor/rules/…`/`GEMINI.md` 等）以 `AGENTS.md` 为唯一真源，由 `multi-tool-entrypoint-sync` 生成，团队用几个工具就生成几个。
 
+## 红线
+
+1. **分析阶段只读。** 探测目录/构建文件/配置只是读；数据库探测走 `mysql-readonly-probe-via-java`，绝不写库。
+2. **生成文件前，清单先给用户过目。** 要新建/修改哪些文件一次性列出，确认后落盘。
+3. **不覆盖已有内容。** 项目已有 AGENTS.md / docs / ai-memory 的部分跳过或增量补充，绝不重写。
+4. **不动业务代码。** 初始化只产出规则与记忆文档。
+5. **探测结论如实标注把握度。** 从代码读出的写「已核实」，推断的标「待确认」，不把猜测写成事实。
+
 ## 执行步骤
 
-### 第 1 步：确认项目信息
+### 第 1 步：自动探测项目（先分析，不先提问）
 
-动手前先和用户确认，不要假设：
+这些信息 AI 读代码就能查清，**不要拿去问用户**：
 
 ```text
-1. 后端目录叫什么（service / server / backend / api …）
-2. 前端目录叫什么（backweb / web / frontend / admin …）
-3. 技术栈（如 Java SpringBoot + Vue Admin）
-4. 是单体还是多模块 / 多服务
-5. 团队主要用哪些 AI 工具
+探测项                  怎么探
+目录结构与前后端划分     ls 根目录；找 pom.xml / build.gradle / package.json 的位置
+技术栈与版本            pom.xml（Spring Boot/JDK 版本）、package.json（Vue/React 版本）
+单体还是多模块          pom 的 <modules>、monorepo 布局
+数据库类型与连接        application*.yml 的 datasource（注意激活 profile）；
+                        能连库时用 mysql-readonly-probe-via-java 探真实版本/核心表（只读）
+既有约定                SQL 增量文件的写法、菜单/字典表结构、代码分层风格（Controller/Service/Mapper）、
+                        逻辑删除字段、ID 类型、日期处理惯例
+已有 AI 协作痕迹        AGENTS.md / CLAUDE.md / docs/ai-memory 是否已存在（存在则增量，不重建）
 ```
 
-### 第 2 步：生成根目录 AGENTS.md
+### 第 2 步：探测结论给用户确认（只问探测不到的）
 
-根 AGENTS.md 至少包含四块：项目概述、目录路由、全局红线、文档约定。模板：
+把第 1 步结论摘要给用户过目（各项标注「已核实 / 待确认」），**只问真探测不到的**：
+
+```text
+1. 团队主要用哪些 AI 工具（决定 multi-tool-entrypoint-sync 生成哪些入口）
+2. AI 行动边界的口径（允许 compile 吗？允许跑测试吗？连库只读还是可授权写？）
+3. 有歧义的取舍（如两个疑似前端目录，哪个是主工程）
+```
+
+### 第 3 步：生成 AGENTS.md（根 + 目录级，填真实内容，不留占位符）
+
+根 AGENTS.md 五块：项目概述、目录路由、**AI 行动边界**、全局红线、文档约定。**用第 1 步探测到的真实目录名、真实技术栈填写**，不交付「（一句话说明…）」这种占位模板。示例：
 
 ```markdown
 # AGENTS.md
 
 ## 项目概述
-（一句话说明这是什么系统、给谁用）
+（用探测结论写实：如"就业服务平台，Spring Boot 2.7 + Vue3 前后端分离，MySQL 5.7"）
 
 ## 目录路由
-- `service/`：后端，进入时先读 `service/AGENTS.md`
-- `backweb/`：前端，进入时先读 `backweb/AGENTS.md`
+- `service/`：后端（Maven 多模块），进入时先读 `service/AGENTS.md`
+- `backweb/`：前端（Vue3 + Vite），进入时先读 `backweb/AGENTS.md`
 - `.agents/skills/`：项目共享 Skills，操作前先看是否有对应 Skill
-- `docs/`：业务事实与验收依据，改业务逻辑前先读
+- `docs/`：业务事实与验收依据，改业务逻辑前先读；需求说明归档在 `docs/requirements/`
+
+## AI 行动边界（本项目口径，第 2 步与用户确认后写死，所有 AI 工具统一遵守）
+- 构建：允许 compile（不 package、不启动服务）/ 或按确认结果填
+- 测试：禁止自动执行 / 或允许单测
+- 数据库：只读探测随时可做；写库需本次会话明确授权（mysql-guarded-write）
+- SQL：一律增量文件，不改已执行过的旧 SQL；执行权在人
 
 ## 全局红线
 - **首次浏览/探索代码前，必须先用 `project-context-sync` 同步远程并加载 `docs/ai-memory`**（无 git 仓库则跳过同步）
@@ -82,36 +113,43 @@ project-root/
 
 ## 文档约定
 - 开工先读 `docs/ai-memory/overview.md`（项目心智模型）；业务变更与任务记录由 `ai-handoff-doc-update` 沉淀回 `docs/ai-memory/`
+- 新需求先按 `templates/需求说明模板.md`（AITeamOps 仓库内）写需求说明，归档到 `docs/requirements/`
 - 新模块完成后更新 `docs/模块验收清单.md`
 - 多工具入口以本 `AGENTS.md` 为唯一真源，由 `multi-tool-entrypoint-sync` 生成，不在入口文件里复制规则正文
 ```
 
-### 第 3 步：生成目录级 AGENTS.md
+> **「AI 行动边界」是给团队的关键交付**：允许 compile 吗、能跑测试吗、连库口径是什么——写进项目 AGENTS.md 后，每个成员的每个 AI 工具读到的都是同一套权限口径，不用每次需求里重复交代，也避免不同人给自己的 AI 开不同的口子。
 
-前端、后端各自的 AGENTS.md 写本目录专属约束（技术栈规范、命名约定、该目录适用的 Skill），不重复根目录内容。
+目录级 AGENTS.md（前端、后端各一份）写本目录专属约束：探测到的分层风格、命名约定、逻辑删除字段、日期处理惯例、该目录适用的 Skill——同样写实，不重复根目录内容。
 
-### 第 4 步：创建 docs 模板
+### 第 4 步：建 docs 骨架并【预填初始记忆】（本 Skill 的核心价值）
 
 ```text
 docs/系统业务流程.html            # 业务全景，给 AI 和新人快速建立上下文
 docs/模块验收清单.md              # 每个模块的验收标准，作为「完成」的客观依据
-docs/ai-memory/overview.md       # 项目心智模型快照，团队共享理解的单一入口，开工先读
-docs/ai-memory/task-log.md       # 任务流水，每次重要变更追加一条
+docs/requirements/               # 需求说明归档（按 templates/需求说明模板.md 编写）
+docs/ai-memory/overview.md       # ★ 用第 1 步分析结果写【初稿】，不许留空
+docs/ai-memory/task-log.md       # 任务流水（首条记录：本次初始化）
 docs/ai-memory/interface-map.md  # 接口入口、请求/返回字段映射
-docs/ai-memory/database-map.md   # 表结构、表关系、关键字段含义
+docs/ai-memory/database-map.md   # ★ 能连库时用只读探测预填核心表初稿
 docs/ai-memory/risk-points.md    # 通用风险点、易踩的坑
 docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文件
 ```
 
-> `docs/ai-memory/` 下的文件由 `ai-handoff-doc-update` 在任务收尾时增量写入，这里只建空骨架。
-
-### 第 5 步：建立 .agents/skills 目录并接入 Skill
+`overview.md` 初稿至少包含（全部来自第 1 步探测，标注「已核实/待确认」）：
 
 ```text
-.agents/skills/
+架构一句话（技术栈+版本+部署形态）｜模块清单（每模块一行职责）｜
+数据库（类型/版本/核心表一览）｜关键约定（ID 类型、逻辑删除、日期格式、
+SQL 增量文件写法、菜单权限机制）｜已知风险点
 ```
 
-按需放入团队共享 Skill。
+> 空骨架是上一版的坑：`overview.md` 为空时，下次 `project-context-sync` 加载进来的是空气，读写闭环名存实亡。**预填初稿让闭环从第一天就有内容。**
+
+### 第 5 步：接入 Skills 与多工具入口
+
+- 建 `.agents/skills/`，按需放入团队共享 Skill。
+- 团队用多个 AI 工具时，用 `multi-tool-entrypoint-sync` 生成各工具入口（指回 AGENTS.md）。
 
 ## 配套 Skills
 
@@ -134,5 +172,6 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 ## 本 Skill 不做什么
 
 - 不编写业务代码。
-- 不替用户决定目录命名，必须先确认。
+- 不把 AI 能自己探测的信息拿去问用户（那是偷懒）；也不把探测不到的事替用户拍板（工具选择、行动边界口径必须确认）。
+- 不交付空骨架——`overview.md`、`database-map.md` 必须有初稿内容。
 - 不生成空指针 Skill 引用——只引用真实存在的 Skill，规划中的明确标注。
