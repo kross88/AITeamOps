@@ -56,6 +56,9 @@ git diff --staged
 ```text
 - 疑似密钥/令牌：AKIA、password=、secret、token、-----BEGIN ... PRIVATE KEY-----
 - 配置文件：.env、application-prod.yml 里的明文密码、数据库连接串
+- 个人信息数据文件：修数据/排查时导出的备份 csv/xlsx/sql（姓名、身份证号、手机号）——
+  一律不入库，移出仓库目录保管或加 .gitignore（真实案例：一份含 2777 人身份证号的
+  备份 csv 曾以未跟踪状态躺在仓库里，差一个 git add 就进公有历史）
 - 调试残留：console.log 大量堆积、System.out.println 临时打印、TODO/FIXME 标记的未完成代码
 - 大文件 / 二进制：误加的 jar、zip、图片、node_modules、target、dist
 - 与本次功能无关的大范围改动
