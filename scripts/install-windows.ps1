@@ -64,10 +64,8 @@ if (-not $ProjectRoot) {
 } else {
     Write-Host "== 2/2 初始化项目协作骨架：$ProjectRoot =="
 
-    # 目录路由级 AGENTS.md（service/backweb 为示例命名，按实际项目调整）
+    # 只建项目级（根）AGENTS.md；目录级 AGENTS.md 初始化不建，某目录攒够专属约束再按需补
     New-FileIfMissing "$ProjectRoot\AGENTS.md"
-    New-FileIfMissing "$ProjectRoot\service\AGENTS.md"
-    New-FileIfMissing "$ProjectRoot\backweb\AGENTS.md"
 
     # 项目共享 Skills 目录
     New-DirIfMissing "$ProjectRoot\.agents\skills"
