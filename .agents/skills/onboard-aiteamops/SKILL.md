@@ -87,6 +87,8 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
   字典值域、ID 类型、日期格式），别靠猜。
 - 写库仅限用户本次会话明确授权，用 mysql-guarded-write：只碰需求相关表（白名单先过目）、
   逐条预检+报告影响行数、先备份可回滚；DROP DATABASE / TRUNCATE / 无 WHERE 更新等绝对禁止。
+  凡非只读语句（INSERT/UPDATE/DELETE/DDL）每条必记执行台账到项目内 docs/ai-memory/db-write-log.md
+  （含 SQL 原文/影响行数/回滚 SQL）；SELECT 不记。
 
 ### 可用 Skill（命中即用，全文见仓库）
 project-context-sync 开工同步｜ai-handoff-doc-update 任务后沉淀项目记忆｜

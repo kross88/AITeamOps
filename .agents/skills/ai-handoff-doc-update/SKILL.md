@@ -66,6 +66,7 @@ description: 任务完成后沉淀项目记忆。当完成一项涉及代码/SQL
 | 某模块的业务理解、字段、流程 | `docs/ai-memory/modules/<模块>.md` | 仅新模块时在索引加一行 |
 | 接口入口、请求/返回字段映射 | `docs/ai-memory/interface-map.md` | 否 |
 | 表结构、表关系、关键字段含义 | `docs/ai-memory/database-map.md` | 仅新增关键表时在索引加一行 |
+| 授权写库的执行台账（非只读语句） | `docs/ai-memory/db-write-log.md`（由 `mysql-guarded-write` 追加） | 否 |
 | 通用风险点、易踩的坑 | `docs/ai-memory/risk-points.md` | 仅新增重大风险时在索引加一行 |
 | 新模块 / 新关键表 / 新 Skill / 目录结构变动 | 对应明细文件 | **是**（只更新索引那一行） |
 

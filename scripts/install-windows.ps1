@@ -81,6 +81,7 @@ if (-not $ProjectRoot) {
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\task-log.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\interface-map.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\database-map.md"
+    New-FileIfMissing "$ProjectRoot\docs\ai-memory\db-write-log.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\risk-points.md"
 }
 
