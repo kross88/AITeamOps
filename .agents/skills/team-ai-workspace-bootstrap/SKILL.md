@@ -148,6 +148,8 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 SQL 增量文件写法、菜单权限机制）｜已知风险点
 ```
 
+> 模块与表名用 `[[名称]]` 标注互链（`[[模块]]`→`modules/模块.md`、`[[表名]]`→`database-map.md` 对应小节，约定见 `ai-handoff-doc-update` 的「关系链接」），让 overview 从第一天就是记忆网的关系中枢。
+
 > 空骨架是上一版的坑：`overview.md` 为空时，下次 `project-context-sync` 加载进来的是空气，读写闭环名存实亡。**预填初稿让闭环从第一天就有内容。**
 
 ### 第 5 步：接入 Skills 与多工具入口
