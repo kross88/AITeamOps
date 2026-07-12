@@ -8,6 +8,7 @@
 ### v0.2.0（开发中 / unreleased）
 聚焦两个核心问题：① 一个人用多个模型写同一项目；② 一个团队多人、各自 AI 对项目理解不一。并引入「三层记忆 + 跨项目经验累积」。
 - `project-context-sync` —— 开工/首次浏览代码前**先同步远程（git pull）+ 加载 `docs/ai-memory`**，把理解对齐到团队基线（`ai-handoff-doc-update` 的读侧对偶）
+- `requirement-delivery-flow` —— 补上读写闭环中间「干活」阶段的执行纪律，治「AI 空转打转」（用"继续推进/这就去做/不再问你"等无进展播报冒充进度）：想清楚（结合代码/影响面/角色/复用旧代码）→ 需求明确直接做、把握不准或影响大才确认方案且最多一次 → 一口气实现到完成不空转 → 按当前 JDK/语言版本静态自检；源自真实场景（另一 AI 反复空转、用户连发多次"继续"仍原地打转，最终结果尚可但过程极度绕弯）
 - `cross-project-experience` —— 把**对任何项目都适用**的经验沉淀进全局指令文件（CLAUDE.md/AGENTS.md），一个微型的永久经验累积过程（第 ② 层记忆）
 - `onboard-aiteamops` + `ONBOARDING.md` —— 自举层：让一个陌生工具/模型「读懂框架→写进自己的永久记忆文件→自检」，把「让你的 AI 学习并永久记住本框架」变成自助、可验证、跨工具的流程
 - `multi-tool-entrypoint-sync` + `scripts/sync-tool-entrypoints.ps1` —— 以 `AGENTS.md` 为唯一真源，为 Codex/Claude/Cursor/Copilot/Gemini 等生成「指回真源」的入口文件

@@ -80,6 +80,9 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
 - 冲突外显：两条规则打架不许沉默选边——按更安全一侧执行并声明「冲突点+选择+理由」，拿不准就问。
 - 验证等级：交付代码改动时声明 L0 静态阅读 / L1 编译 / L2 测试 / L3 联调，及未达等级的风险；
   被禁止构建时主动申请最小验证（仅 compile）。静态核对方法签名 ≠ 编译验证。
+- 交付节奏（不空转）：收到开发需求先结合当前代码想清楚（怎么改/影响面/涉及角色/可复用旧代码）→
+  需求明确直接做、把握不准或影响大才确认方案且全程最多一次 → 确认后一口气实现到完成，不发
+  "继续推进/这就去做/不再问你"这类无进展播报 → 完成后按 JDK/语言版本静态自检。对应 requirement-delivery-flow。
 
 ### 数据库
 - 默认只读（mysql-readonly-probe-via-java）。写 SQL 前先探测真实表结构与库版本方言；
@@ -91,11 +94,11 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
   （含 SQL 原文/影响行数/回滚 SQL）；SELECT 不记。
 
 ### 可用 Skill（命中即用，全文见仓库）
-project-context-sync 开工同步｜ai-handoff-doc-update 任务后沉淀项目记忆｜
-ai-deliverable-review 复核 AI/他人交付的模块（验收级）｜cross-project-experience 跨项目经验沉淀到本文件｜
-multi-tool-entrypoint-sync 多工具入口统一｜git-commit-guard 安全提交｜
-mysql-readonly-probe-via-java 只读探测｜mysql-guarded-write 授权写库（受控）｜
-team-ai-workspace-bootstrap 新项目骨架
+project-context-sync 开工同步｜requirement-delivery-flow 干活执行纪律（治空转）｜
+ai-handoff-doc-update 任务后沉淀项目记忆｜ai-deliverable-review 复核 AI/他人交付的模块（验收级）｜
+cross-project-experience 跨项目经验沉淀到本文件｜multi-tool-entrypoint-sync 多工具入口统一｜
+git-commit-guard 安全提交｜mysql-readonly-probe-via-java 只读探测｜
+mysql-guarded-write 授权写库（受控）｜team-ai-workspace-bootstrap 新项目骨架
 
 ### 跨项目经验（自动累积，由 cross-project-experience 维护；改前确认）
 - （示例）合并若没先 pull、或对冲突没看就合，必须三方核对（合并结果 vs 本地父 vs 远程父），

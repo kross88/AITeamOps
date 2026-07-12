@@ -164,6 +164,7 @@ SQL 增量文件写法、菜单权限机制）｜已知风险点
 ```text
 .agents/skills/onboard-aiteamops/SKILL.md                # 自举：教新工具/模型学会并永久记住本框架
 .agents/skills/project-context-sync/SKILL.md             # 开工先同步远程+加载记忆，对齐团队理解（读侧）
+.agents/skills/requirement-delivery-flow/SKILL.md        # 干活阶段执行纪律：想清楚→最多确认一次→一口气做完→自检，治空转
 .agents/skills/ai-handoff-doc-update/SKILL.md            # 任务后文档沉淀，按类别路由到 docs/ai-memory（写侧）
 .agents/skills/ai-deliverable-review/SKILL.md            # 复核 AI/他人交付的模块（验收级，不信总结只信代码）
 .agents/skills/cross-project-experience/SKILL.md         # 跨项目通用经验沉淀到全局指令文件（全局累积）
