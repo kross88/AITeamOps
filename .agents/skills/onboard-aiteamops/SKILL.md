@@ -85,9 +85,11 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
   "继续推进/这就去做/不再问你"这类无进展播报 → 完成后按 JDK/语言版本静态自检。对应 requirement-delivery-flow。
 
 ### 数据库
-- 默认只读（mysql-readonly-probe-via-java）。写 SQL 前先探测真实表结构与库版本方言；
-  写/改涉及库字段的接口后，能连库就 SELECT 采样核验字段类型与存储格式（逗号分隔 vs JSON、
-  字典值域、ID 类型、日期格式），别靠猜。
+- 默认只读（mysql-readonly-probe-via-java，不限 MySQL——PG 系/金仓按其方言适配节选驱动与探测 SQL，
+  库类型决定探法）。写 SQL 前先探测真实表结构与库版本方言；写/改涉及库字段的接口后，能连库就
+  SELECT 采样核验字段类型与存储格式（逗号分隔 vs JSON、字典值域、ID 类型、日期格式），别靠猜。
+- 连库挂死超时 ≠ 目标不可达：先怀疑自己工具的网络沙箱/代理——问用户能否连、做对照测试、
+  声明后关沙箱重测，三步做完才许下「不可达」结论。
 - 写库仅限用户本次会话明确授权，用 mysql-guarded-write：只碰需求相关表（白名单先过目）、
   逐条预检+报告影响行数、先备份可回滚；DROP DATABASE / TRUNCATE / 无 WHERE 更新等绝对禁止。
   凡非只读语句（INSERT/UPDATE/DELETE/DDL）每条必记执行台账到项目内 docs/ai-memory/db-write-log.md
