@@ -42,7 +42,7 @@ project-root/
         ├── database-map.md    # 表结构与关系
         ├── db-write-log.md    # 授权写库执行台账（mysql-guarded-write 追加，非只读语句必记）
         ├── risk-points.md     # 风险点与坑
-        └── modules/           # 各模块业务理解，一模块一文件
+        └── modules.md         # 各模块业务理解，一模块一个 ## 小节（段落过大再拆 modules/<模块>.md）
 ```
 
 > docs 结构与 `ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 完全对齐，三处保持同一套，避免「两套并存」。
@@ -137,7 +137,7 @@ docs/ai-memory/interface-map.md  # 接口入口、请求/返回字段映射
 docs/ai-memory/database-map.md   # ★ 能连库时用只读探测预填核心表初稿
 docs/ai-memory/db-write-log.md   # 授权写库执行台账（mysql-guarded-write 追加，非只读语句必记）
 docs/ai-memory/risk-points.md    # 通用风险点、易踩的坑
-docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文件
+docs/ai-memory/modules.md        # 各模块业务理解，一模块一个 ## 小节（初始化即列出探测到的模块标题）
 ```
 
 `overview.md` 初稿至少包含（全部来自第 1 步探测，标注「已核实/待确认」）：
@@ -148,7 +148,7 @@ docs/ai-memory/modules/          # 各模块业务理解，一个模块一个文
 SQL 增量文件写法、菜单权限机制）｜已知风险点
 ```
 
-> 模块与表名用 `[[名称]]` 标注互链（`[[模块]]`→`modules/模块.md`、`[[表名]]`→`database-map.md` 对应小节，约定见 `ai-handoff-doc-update` 的「关系链接」），让 overview 从第一天就是记忆网的关系中枢。
+> 模块与表名用 `[[名称]]` 标注互链（`[[模块]]`→`modules.md` 对应小节、`[[表名]]`→`database-map.md` 对应小节，约定见 `ai-handoff-doc-update` 的「关系链接」），让 overview 从第一天就是记忆网的关系中枢。
 
 > 空骨架是上一版的坑：`overview.md` 为空时，下次 `project-context-sync` 加载进来的是空气，读写闭环名存实亡。**预填初稿让闭环从第一天就有内容。**
 

@@ -71,7 +71,7 @@ if (-not $ProjectRoot) {
     New-DirIfMissing "$ProjectRoot\.agents\skills"
 
     # docs：业务事实 + 项目记忆（与 ai-handoff-doc-update 的路由表保持一致）
-    New-DirIfMissing "$ProjectRoot\docs\ai-memory\modules"
+    New-DirIfMissing "$ProjectRoot\docs\ai-memory"
     New-DirIfMissing "$ProjectRoot\docs\requirements"
     New-FileIfMissing "$ProjectRoot\docs\系统业务流程.html"
     New-FileIfMissing "$ProjectRoot\docs\模块验收清单.md"
@@ -81,6 +81,7 @@ if (-not $ProjectRoot) {
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\database-map.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\db-write-log.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\risk-points.md"
+    New-FileIfMissing "$ProjectRoot\docs\ai-memory\modules.md"
 }
 
 Write-Host "AI 协作目录初始化完成。" -ForegroundColor Green
