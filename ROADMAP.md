@@ -19,8 +19,9 @@
 - **固定动作**（把义务性规则绑定到可见产物，治「巧合合规」与沉默偏离）：开工声明、收尾沉淀结论、冲突外显、验证等级声明——禁止性规则容易守、义务性规则容易漏，可见产物让漏跑一眼可查
 - **数据库核验习惯**：写 SQL 前先探真实表结构与方言；写/改接口后 SELECT 采样核验字段类型与存储格式（逗号分隔 vs JSON 等），别靠猜
 - `mysql-readonly-probe` 多方言化 + 网络误诊判别（源自真实 KingbaseES 探库场景）：库类型决定探法——金仓/PG 方言适配表（驱动类/URL/currentSchema/标识符引号/reltuples 估算）、千万行大表探测要点（先估算后精确、每表独立连接）、「挂死超时≠目标不可达」三步判别（问用户/对照测试/关沙箱重测，做完才许下不可达结论）、交人执行的脚本必带清理段（源码含明文密码）
-- `team-ai-workspace-bootstrap` 升级为「**初始化 = 分析 + 预填**」：自动探测项目结构/技术栈/数据库（只问探测不到的），生成含真实内容的 AGENTS.md（新增「**AI 行动边界**」——本项目允许 compile 吗/测试口径/连库口径，全团队所有 AI 工具统一读同一套权限口径）并预填 `overview.md`/`database-map.md` 初稿——空骨架时代结束，读写闭环第一天就有内容
+- `team-ai-workspace-bootstrap` 升级为「**初始化 = 分析 + 预填**」：自动探测项目结构/技术栈/数据库（只问探测不到的），生成含真实内容的 AGENTS.md（新增「**AI 行动边界**」——本项目允许 compile 吗/测试口径/连库口径，全团队所有 AI 工具统一读同一套权限口径）并预填 `overview.md`/`details.md` 初稿——空骨架时代结束，读写闭环第一天就有内容
 - `templates/需求说明模板.md` —— **输入侧治理**：给 AI 的开发任务书模板（业务闭环/角色口径/默认决策口径/交付物与自测清单/固定回复格式），提炼自真实项目验证有效的写法；需求说明归档到项目 `docs/requirements/` 随代码进 git
+- **ai-memory 收敛为三文件制**（最小骨架到底）：`overview.md` 快照+风险要点（core 整读）/ `details.md` 全部明细一实体一 `##` 小节（working 按节查，`[[实体]]` 统一指它）/ `task-log.md` 流水+DBW 写库台账（只追加）——三种写入模式各占一文件是底线，再合会互相伤害；小节过大/频繁冲突再拆独立文件，老项目分文件结构沿用不迁移
 - CI（`.github/workflows/validate.yml` + `scripts/validate.sh`）：校验 SKILL.md 结构与 README 一致性
 
 ### v0.1.0
@@ -46,7 +47,7 @@
 | `multi-tool-compatibility-examples` | 各工具接入与触发的最小可跑示例 | 在 `multi-tool-entrypoint-sync` 基础上补样例 |
 | `install.sh`（Linux/macOS） | 把 `install-windows.ps1` 的安装/初始化能力补到类 Unix | 跨平台 |
 | 并行开发约定 | 多名成员同时让各自 AI 开发同一项目时的协作协议：模块认领、分支口径、共享文件（字典/错误码/路由表）改动的碰撞预防 | 可先作为 bootstrap 生成的 AGENTS.md 一节，够复杂再独立成 Skill |
-| `retrospective-review` | 定期（如月度）让 AI 复盘 task-log/risk-points：重复出现的坑 → 提议升级为规则或 Skill | cross-project-experience 的批处理版，让框架自我进化有节奏 |
+| `retrospective-review` | 定期（如月度）让 AI 复盘 task-log 与 overview 风险要点：重复出现的坑 → 提议升级为规则或 Skill | cross-project-experience 的批处理版，让框架自我进化有节奏 |
 
 ## 记忆的成长路径 / Memory scaling path
 

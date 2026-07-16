@@ -92,8 +92,8 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
   声明后关沙箱重测，三步做完才许下「不可达」结论。
 - 写库仅限用户本次会话明确授权，用 mysql-guarded-write：只碰需求相关表（白名单先过目）、
   逐条预检+报告影响行数、先备份可回滚；DROP DATABASE / TRUNCATE / 无 WHERE 更新等绝对禁止。
-  凡非只读语句（INSERT/UPDATE/DELETE/DDL）每条必记执行台账到项目内 docs/ai-memory/db-write-log.md
-  （含 SQL 原文/影响行数/回滚 SQL）；SELECT 不记。
+  凡非只读语句（INSERT/UPDATE/DELETE/DDL）每条必记执行台账（DBW- 条目）到项目内
+  docs/ai-memory/task-log.md（含 SQL 原文/影响行数/回滚 SQL）；SELECT 不记。
 
 ### 可用 Skill（命中即用，全文见仓库）
 project-context-sync 开工同步｜requirement-delivery-flow 干活执行纪律（治空转）｜

@@ -75,13 +75,10 @@ if (-not $ProjectRoot) {
     New-DirIfMissing "$ProjectRoot\docs\requirements"
     New-FileIfMissing "$ProjectRoot\docs\系统业务流程.html"
     New-FileIfMissing "$ProjectRoot\docs\模块验收清单.md"
+    # ai-memory 三文件制：overview 快照 / details 明细 / task-log 流水+台账
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\overview.md"
+    New-FileIfMissing "$ProjectRoot\docs\ai-memory\details.md"
     New-FileIfMissing "$ProjectRoot\docs\ai-memory\task-log.md"
-    New-FileIfMissing "$ProjectRoot\docs\ai-memory\interface-map.md"
-    New-FileIfMissing "$ProjectRoot\docs\ai-memory\database-map.md"
-    New-FileIfMissing "$ProjectRoot\docs\ai-memory\db-write-log.md"
-    New-FileIfMissing "$ProjectRoot\docs\ai-memory\risk-points.md"
-    New-FileIfMissing "$ProjectRoot\docs\ai-memory\modules.md"
 }
 
 Write-Host "AI 协作目录初始化完成。" -ForegroundColor Green

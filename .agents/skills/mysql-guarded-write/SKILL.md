@@ -32,7 +32,7 @@ description: 仅在用户明确授权后，代替用户对 MySQL 执行写操作
 7. **凡写操作必落执行台账（可回溯是硬要求）。**
    - **SELECT 等只读语句不记**（预检采样、回读验证的 SELECT 都不入台账，避免噪声）。
    - **凡执行 INSERT / UPDATE / DELETE / DDL 等非只读语句，每一条都必须记入执行台账**，缺一条即视为违规。
-   - 台账落在**目标项目内的固定相对路径**：`docs/ai-memory/db-write-log.md`（追加，不覆盖）——放项目里而非我的私有记忆，团队和下一个接手的 AI 都能查到「这库被谁、在何时、动过什么」。项目无 `docs/ai-memory/` 骨架时，先把台账内容备好、在收尾里提请用户决定建骨架，不因缺骨架就不记（对齐 `ai-handoff-doc-update` 的兜底）。
+   - 台账落在**目标项目内的固定相对路径**：`docs/ai-memory/task-log.md`（`DBW-` 条目，追加不覆盖）——放项目里而非我的私有记忆，团队和下一个接手的 AI 都能查到「这库被谁、在何时、动过什么」。项目无 `docs/ai-memory/` 骨架时，先把台账内容备好、在收尾里提请用户决定建骨架，不因缺骨架就不记（对齐 `ai-handoff-doc-update` 的兜底）。
    - 每条台账至少含：执行时间、授权依据（用户原话）、目标库、SQL 原文、预期/实际影响行数、回滚 SQL。格式见文末「执行台账条目」。
    - 台账是"已执行事实"的账本，最终报告是"本次汇总"，两者都要有。
 
@@ -63,12 +63,12 @@ SHOW CREATE TABLE t;
 
 ### 第 4 步：回读验证 + 落台账
 - 执行后用 SELECT 回读关键数据，确认结果符合意图（不只是"语句成功"，而是"数据变成了想要的样子"）。
-- **每条写语句执行完，立即追加一条到 `docs/ai-memory/db-write-log.md`**（红线 7）。SELECT 回读/预检不记。
+- **每条写语句执行完，立即以 `DBW-` 条目追加到 `docs/ai-memory/task-log.md`**（红线 7）。SELECT 回读/预检不记。
 
 ### 第 5 步：报告 + 沉淀
 汇总最终报告（下方格式），并确认台账已逐条落盘、回滚 SQL 齐备。
 
-## 执行台账条目（追加到 `docs/ai-memory/db-write-log.md`，一条写操作一条）
+## 执行台账条目（追加到 `docs/ai-memory/task-log.md`，一条写操作一条）
 
 ```markdown
 ## [DBW-YYYYMMDD-NN] 一句话说明本次改了什么
@@ -107,8 +107,7 @@ SHOW CREATE TABLE t;
 - 无 / 第 n 条实际影响与预期不符已中止：…
 
 ### 6. 沉淀
-- 执行台账：已逐条追加到 docs/ai-memory/db-write-log.md（本次 n 条写操作）
-- 任务记录：已写入 docs/ai-memory/task-log.md（或缺骨架时内容已备好，提请用户决定）
+- 执行台账与任务记录：已逐条以 DBW- 条目追加到 docs/ai-memory/task-log.md（本次 n 条写操作；缺骨架时内容已备好，提请用户决定）
 ```
 
 ## 与 mysql-readonly-probe-via-java 的分工
