@@ -11,7 +11,7 @@ AITeamOps 是一套面向团队的 AI 协作开发 **Skills 集合**：把团队
 ```text
 AGENTS.md  →  规则与路由：在哪个目录守什么约束、读哪个 Skill
 Skills     →  执行流程：可复用操作步骤固化成可触发流程
-docs       →  业务事实与验收依据
+docs       →  业务事实与验收依据：计划、需求、流程、契约、验收、项目记忆
 ```
 
 三层记忆（经验往哪沉淀）：
@@ -25,7 +25,7 @@ docs       →  业务事实与验收依据
 ## 目录路由
 
 - `.agents/skills/`：全部 Skill 所在地，每个子目录一个 `SKILL.md`。改任何 Skill 前先读它本身。
-- `scripts/`：脚本。`install-windows.ps1`（安装 Skills + 初始化项目骨架）、`sync-tool-entrypoints.ps1`（生成各工具入口）、`validate.sh`（CI 校验）。
+- `scripts/`：脚本。`install-windows.ps1`（只安装用户级 Skills）、`sync-tool-entrypoints.ps1`（按明确工具清单生成薄入口）、`validate.sh`（CI 校验）。
 - `ROADMAP.md` / `CONTRIBUTING.md`：路线图（规划中唯一来源）/ 贡献指南。
 - `README.md`：对外说明书，面向人类读者。
 - `LICENSE`：MIT。
@@ -36,8 +36,10 @@ docs       →  业务事实与验收依据
 - **规则冲突必须外显。** 两条规则打架（如"要沉淀记忆"vs"不做范围外变更"）时，不许沉默选边：按更安全的一侧执行，并在总结里声明「冲突点 + 我选了哪边 + 为什么」；拿不准就停下问人。沉默处理会让偏离对用户不可见。
 - **不在本仓库写入业务代码。** 这里只放 Skill 与文档。
 - **改 Skill 的「红线 / 认知边界」前先问人。** 那是各 Skill 的安全承诺，影响所有使用者，不可自行放宽。
-- **保持三处 docs 结构一致。** `team-ai-workspace-bootstrap` 的推荐结构、`ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 创建的骨架必须对齐，改一处要同步其余两处。
-- **脚本不得破坏用户已有文件。** 初始化脚本对已存在的目录/文件一律跳过，绝不覆盖或清空。
+- **保持项目文档路由一致。** `team-ai-workspace-bootstrap`、`ai-handoff-doc-update`、`project-context-sync` 与数据库台账规则必须使用同一套 `docs/` 路径；机械安装脚本不创建项目骨架。
+- **项目结构最小化。** 项目根目录只放 AI 工具入口与工程必要文件；计划、需求、业务流程、字段契约和验收依据统一归入 `docs/`。业务契约文件不使用 `Agent` 命名；无真实内容时不预建空文件、空目录或目录级 `AGENTS.md`。
+- **项目规则一源多入口。** 根 `AGENTS.md` 是项目级通用规则真源；`CLAUDE.md` 等入口只导入或指向它。目录级 `AGENTS.md` 只写真实的目录增量约束，不能放宽全局或根目录安全红线。
+- **脚本不得破坏用户已有文件。** 入口同步脚本不得覆盖手写入口；安装脚本只覆盖 AITeamOps 托管的同名 Skills，不触碰其他名称；项目初始化按增量方式生成真实内容，不覆盖已有内容。
 - **README 里写到的能力必须真实存在。** 规划中的 Skill 明确标注「规划中」，不假装已实现。
 
 ## 固定动作（可见产物，缺了 = 没跑流程）
@@ -54,6 +56,8 @@ docs       →  业务事实与验收依据
 
 - 新增 / 改动 Skill 后，同步更新 `README.md` 的「包含的 Skills」表格。
 - 规划中的 Skill 清单以根目录 `ROADMAP.md` 为**唯一来源**，README、各 Skill 正文一律指向它，不重复维护。
+- 项目计划、需求、流程、字段/内容契约和验收标准统一放到项目 `docs/`；`AGENTS.md` 只保留规则与路由，不复制业务正文。
+- 多工具入口按团队实际使用的工具显式生成；不得因省略工具清单而生成全部入口，也不得覆盖手写入口。
 - 贡献流程与 Skill 编写规范见 `CONTRIBUTING.md`。
 - 提交遵循 `git-commit-guard` 的思路：先自检 diff（含未跟踪文件），再 commit，push 前确认。
 

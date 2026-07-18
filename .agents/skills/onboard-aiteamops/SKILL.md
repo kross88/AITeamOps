@@ -36,7 +36,7 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
 拿不准当前是什么工具、文件在哪 → **问用户**，不要猜。
 
 ### 第 3 步：安装 Skills 到该工具可发现的位置（可选但推荐）
-- Windows：可用 `scripts/install-windows.ps1`（把 `.agents/skills/*` 复制到 `~/.agents/skills/`）。
+- Windows：可用 `scripts/install-windows.ps1`（只把 `.agents/skills/*` 复制到用户级 `~/.agents/skills/`，不创建项目骨架）。
 - 或不复制，只在治理块里写明仓库路径，命中场景时按需读对应 `SKILL.md`（省 token）。
 
 ### 第 4 步：拟「治理块」→ 用户确认 → 增量写入
@@ -67,6 +67,12 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
 ②时间分类（含「现在/最近/目前/本周」等时效词 → 转绝对日期或标「截至 YYYY-MM-DD」）；
 ③原子化（每条像一条独立事实，超 ~200 字还像原话就先蒸馏成一句）。
 
+### 项目结构
+- 项目根目录只放 AI 工具入口与工程必要文件；计划、需求、业务流程、字段/内容契约和验收依据统一放入 `docs/`。
+- 业务契约文件不使用 `Agent` 命名；`AGENTS.md` 只保留规则与路由，不复制业务正文。
+- 没有真实内容时不预建空目录、空文档或目录级 `AGENTS.md`。项目级 `AGENTS.md` 是通用规则真源；目录级文件只写真实增量约束，不能放宽上级安全红线。
+- Skills 默认从用户级 `~/.agents/skills/` 发现；项目需要固定版本或随 Git 分发时才按需 vendoring 到 `.agents/skills/`，不创建空目录。
+
 ### 开工与提交
 - 首次浏览/探索任一项目代码前，先在**目标项目根**（= 要读/改文件所在的仓库，不是会话主
   目录；多仓库逐个，前后端分仓各自 pull）git pull --ff-only 同步（实际验证过非 git 仓库
@@ -92,15 +98,16 @@ Cursor      → 其全局/用户规则文件（以其文档为准）
   声明后关沙箱重测，三步做完才许下「不可达」结论。
 - 写库仅限用户本次会话明确授权，用 mysql-guarded-write：只碰需求相关表（白名单先过目）、
   逐条预检+报告影响行数、先备份可回滚；DROP DATABASE / TRUNCATE / 无 WHERE 更新等绝对禁止。
-  凡非只读语句（INSERT/UPDATE/DELETE/DDL）每条必记执行台账（DBW- 条目）到项目内
-  docs/ai-memory/task-log.md（含 SQL 原文/影响行数/回滚 SQL）；SELECT 不记。
+  凡非只读语句（INSERT/UPDATE/DELETE/DDL）每条必记执行台账（DBW- 条目）：新结构项目写
+  docs/ai-memory/task-log.md，已有项目若使用 db-write-log.md 则继续沿用原文件，不迁移、不双写；
+  台账含 SQL 原文/影响行数/回滚 SQL，SELECT 不记。
 
 ### 可用 Skill（命中即用，全文见仓库）
 project-context-sync 开工同步｜requirement-delivery-flow 干活执行纪律（治空转）｜
 ai-handoff-doc-update 任务后沉淀项目记忆｜ai-deliverable-review 复核 AI/他人交付的模块（验收级）｜
 cross-project-experience 跨项目经验沉淀到本文件｜multi-tool-entrypoint-sync 多工具入口统一｜
 git-commit-guard 安全提交｜mysql-readonly-probe-via-java 只读探测｜
-mysql-guarded-write 授权写库（受控）｜team-ai-workspace-bootstrap 新项目骨架
+mysql-guarded-write 授权写库（受控）｜team-ai-workspace-bootstrap 按真实内容初始化项目
 
 ### 跨项目经验（自动累积，由 cross-project-experience 维护；改前确认）
 - （示例）合并若没先 pull、或对冲突没看就合，必须三方核对（合并结果 vs 本地父 vs 远程父），

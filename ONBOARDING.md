@@ -38,8 +38,10 @@ git clone https://github.com/kross88/AITeamOps.git
 cd AITeamOps
 .\scripts\install-windows.ps1            # 复制 .agents/skills/* 到 ~/.agents/skills/
 
-# 2) 把仓库根 AGENTS.md 里的「治理块」要点，手动加进你的 ~/.claude/CLAUDE.md（或对应工具的全局文件）
+# 2) 把 onboard-aiteamops 的「治理块」要点，手动加进你的 ~/.claude/CLAUDE.md（或对应工具的全局文件）
 ```
+
+> 安装脚本只安装用户级 Skills，不创建项目骨架。项目接入请让 AI 使用 `team-ai-workspace-bootstrap`：先分析项目，再按真实内容生成规则与记忆。
 
 ## 它实现了什么
 
@@ -50,5 +52,6 @@ cd AITeamOps
 - 复核另一个 AI 的交付时按**验收级**来（不信总结只信代码，`ai-deliverable-review`）；
 - 数据库默认只读，写 SQL 前先探真实表结构，改接口后 SELECT 核验字段格式；写库仅限你明确授权（`mysql-guarded-write`，白名单/预检/可回滚）；
 - 团队多人 / 一人多模型时，从同一份共享上下文出发，理解持续收敛。
+- 初始化或整理项目时，根目录只保留 AI 工具入口与工程必要文件；计划、需求、流程、业务契约和验收依据统一放入 `docs/`，没有真实内容就不预建空文件或空目录。
 
 详见 [README.md](README.md) 与 [ROADMAP.md](ROADMAP.md)。

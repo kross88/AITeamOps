@@ -1,6 +1,6 @@
 ---
 name: team-ai-workspace-bootstrap
-description: 初始化项目的 AI 协作环境——先认真分析项目再生成有真实内容的规则与记忆，不是只建空目录。当用户说「初始化下项目」「初始化一下这个项目」「初始化 AI 协作环境」「统一团队 AGENTS.md」「新项目接入 AI 开发规范」「搭建 skills/docs 骨架」时使用。做法：自动探测项目结构/技术栈/模块划分/数据库（只读），探测结论给用户确认后，生成含真实内容的 AGENTS.md（含 AI 行动边界）并预填 docs/ai-memory/overview.md 项目心智模型初稿，让读写闭环从第一天就有内容可读。不编写业务代码。
+description: 初始化项目的 AI 协作环境——先认真分析项目，再按真实内容生成最小规则与记忆，不建空目录或重复入口。当用户说「初始化下项目」「初始化一下这个项目」「初始化 AI 协作环境」「统一团队 AGENTS.md」「新项目接入 AI 开发规范」「搭建 skills/docs 骨架」时使用。做法：自动探测项目结构/技术栈/模块划分/数据库（只读），探测结论给用户确认后，生成含真实内容的根 AGENTS.md、实际工具薄入口和必要的 docs/ai-memory；业务文档统一归入 docs，无内容则跳过。不编写业务代码。
 ---
 
 # Team AI Workspace Bootstrap
@@ -23,26 +23,22 @@ docs       管「业务事实」和「验收依据」——业务流程、交接
 
 ```text
 project-root/
-├── AGENTS.md                  # 项目级总规则 + 目录路由（唯一真源；★ 初始化只建这一份）
-├── CLAUDE.md / GEMINI.md …    # 各工具入口（指针，由 multi-tool-entrypoint-sync 生成，按需）
-├── service/                   # 后端（示例命名，按实际调整）
-│   └── AGENTS.md              # 目录级规则——【按需后加】初始化不建，某目录攒够专属约束再补
-├── backweb/                   # 前端（示例命名，按实际调整）
-│   └── AGENTS.md              # 目录级规则——【按需后加】初始化不建
-├── .agents/
-│   └── skills/                # 项目共享 Skills
+├── AGENTS.md                  # 项目级通用规则唯一真源
+├── CLAUDE.md                  # 仅实际使用 Claude 时生成，内容为 @AGENTS.md
 └── docs/
-    ├── 系统业务流程.html       # 业务全景
-    ├── 模块验收清单.md         # 验收依据
-    ├── requirements/          # 需求说明归档（按 templates/需求说明模板.md 写，随代码进 git）
-    └── ai-memory/             # 项目记忆（开工 project-context-sync 读，收尾 ai-handoff-doc-update 写）
+    ├── 项目计划表.md           # 有真实计划时创建
+    ├── 系统业务流程.md         # 有真实流程时创建
+    ├── 模块验收清单.md         # 有真实验收口径时创建
+    ├── <模块>内容契约.md        # 字段/内容等业务契约，不使用 Agent 命名
+    ├── requirements/          # 出现第一份需独立归档的需求时创建
+    └── ai-memory/             # 有可记录事实时创建
         ├── overview.md        # 心智模型快照 + 风险要点（core，开工必读，保持精简）
         ├── details.md         # 全部明细：模块/表/接口一实体一个 ## 小节（working，按需查节）
         └── task-log.md        # 任务流水 + 写库台账 DBW 条目（只追加）
 ```
 
-> docs 结构与 `ai-handoff-doc-update` 的路由表、`scripts/install-windows.ps1` 完全对齐，三处保持同一套，避免「两套并存」。
-> 多工具入口（`CLAUDE.md`/`.cursor/rules/…`/`GEMINI.md` 等）以 `AGENTS.md` 为唯一真源，由 `multi-tool-entrypoint-sync` 生成，团队用几个工具就生成几个。
+> 上图是“有对应真实内容时”的最大默认骨架，不是空文件清单。无法可靠预填的文件和目录跳过，不写占位符。
+> 多工具入口以根 `AGENTS.md` 为项目级真源，由 `multi-tool-entrypoint-sync` 只为团队明确使用的工具生成。用户级全局安全规则仍是不可放宽底线；目录级 `AGENTS.md` 只在确有专属增量约束时后加，不能放宽上级红线。
 
 ## 红线
 
@@ -51,6 +47,7 @@ project-root/
 3. **不覆盖已有内容。** 项目已有 AGENTS.md / docs / ai-memory 的部分跳过或增量补充，绝不重写。
 4. **不动业务代码。** 初始化只产出规则与记忆文档。
 5. **探测结论如实标注把握度。** 从代码读出的写「已核实」，推断的标「待确认」，不把猜测写成事实。
+6. **不制造空骨架。** 没有真实内容就不建文件或目录；计划、需求、流程、业务契约和验收依据一律归入 `docs/`，业务契约不使用 `Agent` 命名。
 
 ## 执行步骤
 
@@ -95,8 +92,8 @@ project-root/
 ## 目录路由
 - `service/`：后端（Maven 多模块）；如该目录有 `AGENTS.md` 则进入时先读（默认无，按需后加）
 - `backweb/`：前端（Vue3 + Vite）；同上
-- `.agents/skills/`：项目共享 Skills，操作前先看是否有对应 Skill
-- `docs/`：业务事实与验收依据，改业务逻辑前先读；需求说明归档在 `docs/requirements/`
+- `~/.agents/skills/`：默认使用用户级 AITeamOps Skills；项目存在 `.agents/skills/` 时优先使用项目固定版本
+- `docs/`：计划、需求、业务流程、字段/内容契约、验收依据和项目记忆；按任务相关性读取
 
 ## AI 行动边界（本项目口径，第 2 步与用户确认后写死，所有 AI 工具统一遵守）
 - 构建：允许 compile（不 package、不启动服务）/ 或按确认结果填
@@ -112,8 +109,8 @@ project-root/
 
 ## 文档约定
 - 开工先读 `docs/ai-memory/overview.md`（项目心智模型）；业务变更与任务记录由 `ai-handoff-doc-update` 沉淀回 `docs/ai-memory/`
-- 新需求先按 `templates/需求说明模板.md`（AITeamOps 仓库内）写需求说明，归档到 `docs/requirements/`
-- 新模块完成后更新 `docs/模块验收清单.md`
+- 项目计划、需求、业务流程、字段/内容契约和验收依据统一放入 `docs/`；业务契约不使用 `Agent` 命名
+- 出现第一份需要独立归档的需求时才创建 `docs/requirements/`；有真实验收标准时才创建或更新 `docs/模块验收清单.md`
 - 多工具入口以本 `AGENTS.md` 为唯一真源，由 `multi-tool-entrypoint-sync` 生成，不在入口文件里复制规则正文
 ```
 
@@ -121,16 +118,20 @@ project-root/
 
 > **目录级 AGENTS.md 初始化不建。** 把探测到的分层风格、命名约定、逻辑删除字段、日期处理惯例先写进**根** AGENTS.md 或 `docs/ai-memory/overview.md` 即可。等某个目录（如后端某模块）确实积累了「只在本目录成立、且和根不同」的约束，再单独给它加一份目录级 AGENTS.md，写实、不重复根内容。**先根后枝，按需生长**。
 
-### 第 4 步：建 docs 骨架并【预填初始记忆】（本 Skill 的核心价值）
+### 第 4 步：按真实内容建立 docs 并【预填初始记忆】（本 Skill 的核心价值）
 
 ```text
-docs/系统业务流程.html            # 业务全景，给 AI 和新人快速建立上下文
-docs/模块验收清单.md              # 每个模块的验收标准，作为「完成」的客观依据
-docs/requirements/               # 需求说明归档（按 templates/需求说明模板.md 编写）
-docs/ai-memory/overview.md       # ★ 心智模型 + 风险要点，用第 1 步分析结果写【初稿】，不许留空
-docs/ai-memory/details.md        # ★ 明细：模块/表/接口一实体一个 ## 小节；初始化列出探测到的模块标题，能连库就预填核心表小节
-docs/ai-memory/task-log.md       # 任务流水 + 写库台账 DBW 条目（首条记录：本次初始化）
+有可靠项目事实       → docs/ai-memory/overview.md（心智模型 + 风险要点，不许留空）
+有模块/表/接口明细   → docs/ai-memory/details.md（一实体一个 ## 小节）
+本次初始化形成记录   → docs/ai-memory/task-log.md（记录真实动作；不能只写占位标题）
+有项目计划           → docs/项目计划表.md
+有业务全景           → docs/系统业务流程.md
+有验收标准           → docs/模块验收清单.md
+有业务字段/内容契约   → docs/<模块>内容契约.md
+有独立需求文档       → 首份写入时创建 docs/requirements/
 ```
+
+每一项独立判断：没有可靠内容就跳过对应文件及父目录。空仓库或信息不足时，先向用户询问缺失事实；确认后仍无内容，就只生成能够写实的部分，不为凑齐“三文件”而写占位符或推测。
 
 `overview.md` 初稿至少包含（全部来自第 1 步探测，标注「已核实/待确认」）：
 
@@ -142,12 +143,13 @@ SQL 增量文件写法、菜单权限机制）｜已知风险点
 
 > 模块与表名用 `[[名称]]` 标注互链（`[[实体]]`→`details.md` 对应小节（模块/表/接口统一），约定见 `ai-handoff-doc-update` 的「关系链接」），让 overview 从第一天就是记忆网的关系中枢。
 
-> 空骨架是上一版的坑：`overview.md` 为空时，下次 `project-context-sync` 加载进来的是空气，读写闭环名存实亡。**预填初稿让闭环从第一天就有内容。**
+> 空骨架是上一版的坑：`overview.md` 为空时，下次 `project-context-sync` 加载进来的是空气，读写闭环名存实亡。**有事实才建、有文件就预填**，让闭环从第一天就是有效内容。
 
 ### 第 5 步：接入 Skills 与多工具入口
 
-- 建 `.agents/skills/`，按需放入团队共享 Skill。
-- 团队用多个 AI 工具时，用 `multi-tool-entrypoint-sync` 生成各工具入口（指回 AGENTS.md）。
+- 先检测当前工具是否能发现用户级 `~/.agents/skills/`。不能发现或尚未安装时，明确失败并提示运行 onboarding / `install-windows.ps1`。
+- 只有项目需要固定 Skill 版本或随 Git 分发时，才创建 `.agents/skills/` 并放入选定 Skills；不创建空目录。项目版本存在时优先使用项目版本。
+- 团队用多个 AI 工具时，明确列出实际工具，再用 `multi-tool-entrypoint-sync` 生成对应入口；工具清单不得省略。
 
 ## 配套 Skills
 

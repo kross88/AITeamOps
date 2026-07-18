@@ -4,6 +4,7 @@
 #   1) 每个 .agents/skills/*/SKILL.md 含 frontmatter，且有 name: 与 description:
 #   2) frontmatter 的 name 与所在文件夹同名（kebab-case 约定）
 #   3) 每个 Skill 在 README.md「包含的 Skills」表格里被引用
+#   4) 仓库自身 CLAUDE.md 是精确的 AGENTS.md 薄入口
 # 任一不过即以非 0 退出。
 set -uo pipefail
 
@@ -22,14 +23,17 @@ for skill in .agents/skills/*/SKILL.md; do
   found=$((found+1))
   dir="$(basename "$(dirname "$skill")")"
 
-  # 必须以 frontmatter 分隔符开头
-  if [ "$(head -n1 "$skill")" != "---" ]; then
+  # 必须以 frontmatter 分隔符开头；兼容 Windows 编辑器写入的 UTF-8 BOM。
+  first_line="$(head -n1 "$skill")"
+  first_line="${first_line#$'\xEF\xBB\xBF'}"
+  first_line="${first_line%$'\r'}"
+  if [ "$first_line" != "---" ]; then
     err "$skill 缺少 YAML frontmatter（首行应为 ---）"
     continue
   fi
 
   # 提取 frontmatter（首个 --- 与第二个 --- 之间）
-  fm="$(awk 'NR==1{next} /^---[[:space:]]*$/{exit} {print}' "$skill")"
+  fm="$(awk 'NR==1{next} /^---[[:space:]]*$/{exit} {print}' "$skill" | tr -d '\r')"
 
   name="$(printf '%s\n' "$fm" | sed -n 's/^name:[[:space:]]*//p' | head -n1)"
   desc="$(printf '%s\n' "$fm" | sed -n 's/^description:[[:space:]]*//p' | head -n1)"
@@ -87,6 +91,31 @@ for sh in scripts/*.sh; do
     ok "$sh 为 LF 行尾"
   fi
 done
+
+echo ""
+echo "== 校验多工具薄入口 =="
+if [ ! -f CLAUDE.md ]; then
+  err "缺少仓库根 CLAUDE.md"
+else
+  claude_body="$(tr -d '\r' < CLAUDE.md)"
+  if [ "$claude_body" = "@AGENTS.md" ]; then
+    ok "CLAUDE.md 精确导入 AGENTS.md"
+  else
+    err "CLAUDE.md 必须只包含 @AGENTS.md"
+  fi
+fi
+
+if grep -q 'Read-Host\|New-FileIfMissing' scripts/install-windows.ps1; then
+  err "install-windows.ps1 仍包含交互式项目骨架创建逻辑"
+else
+  ok "install-windows.ps1 只负责用户级 Skills 安装"
+fi
+
+if grep -q 'if (-not \$Tools.*\$Tools = \$map.Keys' scripts/sync-tool-entrypoints.ps1; then
+  err "sync-tool-entrypoints.ps1 仍会在省略 -Tools 时生成全部入口"
+else
+  ok "sync-tool-entrypoints.ps1 不再默认生成全部入口"
+fi
 
 echo ""
 if [ "$fail" -ne 0 ]; then
